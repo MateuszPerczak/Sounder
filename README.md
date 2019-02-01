@@ -5,6 +5,9 @@ Sample of Python mp3 music player.
 Main programmer and designer: Mateusz Perczak  
 Helper: Krzysztof Zawisła
 
+## Python version:
+3.6.8
+
 ## Used Libraries 
 + mutagen.mp3
 + pygame
