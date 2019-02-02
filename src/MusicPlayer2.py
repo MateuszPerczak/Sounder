@@ -214,8 +214,9 @@ def MusicListBoxPointer(event):
                         mixer.music.load(ListOfSongs[nr])
                         SongNumber = nr
                         mixer.music.play()
-                        PlayButtonState = 1
-                        PlayButton.configure(image=Pauseimg)
+                        if PlayButtonState == 0:
+                            PlayButtonState = 1
+                            PlayButton.configure(image=Pauseimg)
                         PlayLabelText.set(ListOfSongs[SongNumber])
                         ProgressUpdate()
                         Try = 0
@@ -244,7 +245,7 @@ def ProgressUpdate():
         FileInfo = File.tags['TCON']
         GenreLabelText.set(FileInfo)
     except:
-        GenreLabelText.set("")
+        GenreLabelText.set("None")
     ProgressValue = round(File.info.length, 1)
     ProgressValue = ProgressValue * 10
     ProgressValue = int(ProgressValue)
@@ -256,11 +257,17 @@ def ProgressUpdate():
 
 
 def ProgressBarFill(TotalLength):
+    global PlayButtonState
+    Target = 0
     MusicProgressBar["maximum"] = TotalLength
     Elapsed = 1
     while Elapsed <= TotalLength and mixer.music.get_busy():
         Elapsed += 1
         MusicProgressBar["value"] = Elapsed
+        if Elapsed == TotalLength - 30 and Target != 1:
+            Target = 1
+            PlayButton.configure(image=Playimg)
+            PlayButtonState = 0
         time.sleep(0.1)
 
 
@@ -280,7 +287,7 @@ DirectoryLabel = ttk.Label(PlayerForm, font="Calibri",textvariable=DirectoryLabe
 PlayButton = ttk.Button(PlayerForm, image=Pauseimg, cursor="hand2", takefocus=0)
 NextButton = ttk.Button(PlayerForm, image=Forwardimg, cursor="hand2", takefocus=0)
 PreviousButton = ttk.Button(PlayerForm, image=Previousimg, cursor="hand2", takefocus=0)
-MusicListBox = Listbox(PlayerForm, font="Calibri", cursor="hand2", bd=0, activestyle="none", selectbackground="#8bc34a")
+MusicListBox = Listbox(PlayerForm, font="Calibri", cursor="hand2", bd=0, activestyle="none", selectbackground="#8bc34a", takefocus=0)
 PlayImg = ttk.Label(PlayerForm, image=PlayPhotoimg, style="W.TLabel")
 VolumeSlider = ttk.Scale(PlayerForm, from_=0, to=100, orient=HORIZONTAL, command=Volume, cursor="hand2")
 VolumeLabel = ttk.Label(PlayerForm, textvariable=VolumeValue, font="Calibri", style="W.TLabel")
@@ -299,9 +306,9 @@ DirectoryChangeButton.place(x=0, y=0)
 MusicLabel.place(x=560, y=180)
 DirectoryLabel.place(x=32, y=2, width=651, height=28)
 MusicListBox.place(x=0, y=32, width=400, height=380)
-PlayLabel.place(x=60, y=440)
-PlayBitrate.place(x=60, y=460)
-GenreLabel.place(x=125, y=460)
+PlayLabel.place(x=62, y=436)
+PlayBitrate.place(x=62, y=460)
+GenreLabel.place(x=121, y=460)
 PreviousButton.place(x=490, y=442)
 PlayButton.place(x=535, y=438)
 NextButton.place(x=590, y=442)
