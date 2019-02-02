@@ -29,6 +29,7 @@ MaxSong = 0
 State = 0
 SongNumber = 0
 PlayButtonState = 0
+# ikony
 PlayPhotoimg = PhotoImage(file="musicicon.png")
 Playimg = PhotoImage(file="play.png")
 Pauseimg = PhotoImage(file="pause.png")
@@ -68,10 +69,9 @@ def FirstStart():
         exit("Directory is empty!!")
     mixer.init()
     MusicScan()
-    Unfocus()
 
 
-def ChangeDirectory(e):
+def ChangeDirectory(event):
     global directory
     global State
     global MaxSong
@@ -86,7 +86,6 @@ def ChangeDirectory(e):
         DirectoryLabelText.set(directory)
         MusicScan()
         Update(State)
-        Unfocus()
 
 
 def Update(state):
@@ -102,7 +101,6 @@ def Update(state):
             MusicListBox.delete(0)
         MaxSong = 0
         ListOfSongs = []
-        Unfocus()
 
 
 def Play(event):
@@ -118,7 +116,6 @@ def Play(event):
             time.sleep(0.1)
             PlayButton.configure(image=Playimg)
             PlayButtonState = 0
-            Unfocus()
         elif PlayButtonState == 0:
             mixer.music.load(ListOfSongs[SongNumber])
             PlayLabelText.set(ListOfSongs[SongNumber])
@@ -126,7 +123,6 @@ def Play(event):
             PlayButton.configure(image=Pauseimg)
             PlayButtonState = 1
             ProgressUpdate()
-            Unfocus()
     elif State == 0:
         if PlayButtonState == 1:
             mixer.music.stop()
@@ -134,7 +130,6 @@ def Play(event):
             PlayLabelText.set("")
             PlayButton.configure(image=Playimg)
             PlayButtonState = 0
-            Unfocus()
 
 
 def Next(event):
@@ -154,7 +149,6 @@ def Next(event):
                 mixer.music.play()
                 PlayLabelText.set(ListOfSongs[SongNumber])
                 ProgressUpdate()
-                Unfocus()
         if PlayButtonState == 0:
             if SongNumber < MaxSong - 1:
                 mixer.music.stop()
@@ -166,7 +160,6 @@ def Next(event):
                 mixer.music.play()
                 PlayLabelText.set(ListOfSongs[SongNumber])
                 ProgressUpdate()
-                Unfocus()
 
 
 def Previous(event):
@@ -186,7 +179,6 @@ def Previous(event):
                 mixer.music.play()
                 PlayLabelText.set(ListOfSongs[SongNumber])
                 ProgressUpdate()
-                Unfocus()
         if PlayButtonState == 0:
             if SongNumber > 0:
                 mixer.music.stop()
@@ -198,7 +190,6 @@ def Previous(event):
                 mixer.music.play()
                 PlayLabelText.set(ListOfSongs[SongNumber])
                 ProgressUpdate()
-                Unfocus()
 
 
 def MusicListBoxPointer(event):
@@ -229,7 +220,6 @@ def MusicListBoxPointer(event):
                         PlayLabelText.set(ListOfSongs[SongNumber])
                         ProgressUpdate()
                         Try = 0
-                        Unfocus()
 
 
 def Volume(value):
@@ -240,7 +230,6 @@ def Volume(value):
     VolumeValue.set("{}%".format(value))
     value = value / 100
     mixer.music.set_volume(value)
-    Unfocus()
 
 
 def ProgressUpdate():
@@ -270,15 +259,10 @@ def ProgressUpdate():
 def ProgressBarFill(TotalLength):
     MusicProgressBar["maximum"] = TotalLength
     Elapsed = 1
-    Unfocus()
     while Elapsed <= TotalLength and mixer.music.get_busy():
         Elapsed += 1
         MusicProgressBar["value"] = Elapsed
         time.sleep(0.1)
-
-
-def Unfocus():
-    PlayerForm.focus()
 
 
 def Close():
@@ -292,11 +276,11 @@ PlayLabel = ttk.Label(PlayerForm, textvariable=PlayLabelText, font="Calibri", st
 GenreLabel = ttk.Label(PlayerForm, textvariable=GenreLabelText, font="Calibri", style="W.TLabel")
 PlayBitrate = ttk.Label(PlayerForm, textvariable=BitrateLabelText, font="Calibri", style="W.TLabel")
 VerLabel = ttk.Label(PlayerForm, text="Ver. 01.02.2019", font="Calibri", style="W.TLabel")
-DirectoryChangeButton = ttk.Button(PlayerForm, image=Fileimg, cursor="hand2")
+DirectoryChangeButton = ttk.Button(PlayerForm, image=Fileimg, cursor="hand2", takefocus=0)
 DirectoryLabel = ttk.Label(PlayerForm, font="Calibri",textvariable=DirectoryLabelText,  style="W.TLabel")
-PlayButton = ttk.Button(PlayerForm, image=Pauseimg, cursor="hand2")
-NextButton = ttk.Button(PlayerForm, image=Forwardimg, cursor="hand2")
-PreviousButton = ttk.Button(PlayerForm, image=Previousimg, cursor="hand2")
+PlayButton = ttk.Button(PlayerForm, image=Pauseimg, cursor="hand2", takefocus=0)
+NextButton = ttk.Button(PlayerForm, image=Forwardimg, cursor="hand2", takefocus=0)
+PreviousButton = ttk.Button(PlayerForm, image=Previousimg, cursor="hand2", takefocus=0)
 MusicListBox = Listbox(PlayerForm, font="Calibri", cursor="hand2", bd=0, activestyle="none", selectbackground="#8bc34a")
 PlayImg = ttk.Label(PlayerForm, image=PlayPhotoimg, style="W.TLabel")
 VolumeSlider = ttk.Scale(PlayerForm, from_=0, to=100, orient=HORIZONTAL, command=Volume, cursor="hand2")
