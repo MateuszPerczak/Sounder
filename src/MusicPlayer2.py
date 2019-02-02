@@ -97,8 +97,7 @@ def Update(state):
             MusicListBox.insert(0, file)
         ListOfSongs.reverse()
     elif state == 0:
-        for file in range(MaxSong + 1):
-            MusicListBox.delete(0)
+        MusicListBox.delete(0, END)
         MaxSong = 0
         ListOfSongs = []
 
@@ -275,7 +274,7 @@ MusicProgressBar = ttk.Progressbar(PlayerForm, orient=HORIZONTAL, length=200, mo
 PlayLabel = ttk.Label(PlayerForm, textvariable=PlayLabelText, font="Calibri", style="W.TLabel")
 GenreLabel = ttk.Label(PlayerForm, textvariable=GenreLabelText, font="Calibri", style="W.TLabel")
 PlayBitrate = ttk.Label(PlayerForm, textvariable=BitrateLabelText, font="Calibri", style="W.TLabel")
-VerLabel = ttk.Label(PlayerForm, text="Ver. 01.02.2019", font="Calibri", style="W.TLabel")
+VerLabel = ttk.Label(PlayerForm, text="Ver. 02.02.2019", font="Calibri", style="W.TLabel")
 DirectoryChangeButton = ttk.Button(PlayerForm, image=Fileimg, cursor="hand2", takefocus=0)
 DirectoryLabel = ttk.Label(PlayerForm, font="Calibri",textvariable=DirectoryLabelText,  style="W.TLabel")
 PlayButton = ttk.Button(PlayerForm, image=Pauseimg, cursor="hand2", takefocus=0)
