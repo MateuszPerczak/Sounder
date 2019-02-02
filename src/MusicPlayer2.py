@@ -264,7 +264,7 @@ def ProgressBarFill(TotalLength):
     while Elapsed <= TotalLength and mixer.music.get_busy():
         Elapsed += 1
         MusicProgressBar["value"] = Elapsed
-        if Elapsed == TotalLength - 30 and Target != 1:
+        if Elapsed == TotalLength - 15 and Target != 1:
             Target = 1
             PlayButton.configure(image=Playimg)
             PlayButtonState = 0
