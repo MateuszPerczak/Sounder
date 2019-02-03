@@ -300,12 +300,12 @@ def progressupdate():
 def progressbarfill(totallength):
     global playbuttonstate
     MusicProgressBar["maximum"] = totallength
-    elapsed = 0
+    elapsed = 10
     while elapsed <= totallength and mixer.music.get_busy():
         elapsed += 1
         MusicProgressBar["value"] = elapsed
         time.sleep(0.1)
-    if elapsed > totallength - 30:
+    if elapsed >= totallength - 50:
         PlayButton.configure(image=Playimg)
         playbuttonstate = 0
 
@@ -343,7 +343,7 @@ DirectoryLabelText.set(directory)
 update(state)
 PlayButton.configure(image=Playimg)
 # End
-MusicProgressBar.place(x=1, y=492, width=803, height=9)
+MusicProgressBar.place(x=1, y=492, width=800, height=9)
 DirectoryChangeButton.place(x=32, y=0)
 RefreshButton.place(x=0, y=0)
 MusicLabel.place(x=560, y=180)
