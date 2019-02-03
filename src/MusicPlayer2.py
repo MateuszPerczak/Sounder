@@ -6,6 +6,7 @@ from pygame import mixer
 from tkinter import *
 from tkinter import ttk
 from tkinter.filedialog import askdirectory
+
 PlayerForm = Tk()
 PlayerForm.geometry('800x500')
 PlayerForm.title("Sounder!")
@@ -14,20 +15,20 @@ PlayerForm.iconbitmap("Soundericon.ico")
 PlayerForm.configure(background='#ffffff')
 s = ttk.Style()
 s.theme_use('clam')
-s.configure("G.Horizontal.TProgressbar", foreground='#8bc34a', background='#8bc34a', lightcolor='#8bc34a', darkcolor='#8bc34a', bordercolor='#ffffff', troughcolor='#ffffff')
+s.configure("G.Horizontal.TProgressbar", foreground='#8bc34a', background='#8bc34a', lightcolor='#8bc34a',
+            darkcolor='#8bc34a', bordercolor='#ffffff', troughcolor='#ffffff')
 s.configure("W.TLabel", background='#ffffff', border='0')
-# Zmienne globalne
-Try = 0
+tryv = 0
 PlayLabelText = StringVar()
 DirectoryLabelText = StringVar()
 GenreLabelText = StringVar()
 BitrateLabelText = StringVar()
 VolumeValue = StringVar()
-ListOfSongs = []
-MaxSong = 0
-State = 0
-SongNumber = 0
-PlayButtonState = 0
+listofsongs = []
+maxsong = 0
+state = 0
+songnumber = 0
+playbuttonstate = 0
 # ikony
 PlayPhotoimg = PhotoImage(file="musicicon.png")
 Playimg = PhotoImage(file="play.png")
@@ -36,20 +37,22 @@ Forwardimg = PhotoImage(file="forward.png")
 Previousimg = PhotoImage(file="previous.png")
 Fileimg = PhotoImage(file="file-directory.png")
 MusicLabelimg = PhotoImage(file="sounder.png")
-SounderDirectory = os.getcwd()
-def MusicScan():
+sounderdirectory = os.getcwd()
+
+
+def musicscan():
     global directory
-    global MaxSong
-    global ListOfSongs
-    global PlayButtonState
-    global State
-    global SongNumber
-    State = 0
-    SongNumber = 0
+    global maxsong
+    global listofsongs
+    global playbuttonstate
+    global state
+    global songnumber
+    state = 0
+    songnumber = 0
     try:
         os.chdir(directory)
     except:
-        os.chdir(SounderDirectory)
+        os.chdir(sounderdirectory)
         os.remove('Data.sou')
         directory = askdirectory()
         if directory == "" or None:
@@ -59,14 +62,14 @@ def MusicScan():
         os.chdir(directory)
     for file in os.listdir(directory):
         if file.endswith(".mp3"):
-            MaxSong += 1
-            State = 1
-            ListOfSongs.append(file)
-    if State == 1 and PlayButtonState == 0:
-        mixer.music.load(ListOfSongs[SongNumber])
+            maxsong += 1
+            state = 1
+            listofsongs.append(file)
+    if state == 1 and playbuttonstate == 0:
+        mixer.music.load(listofsongs[songnumber])
 
 
-def FirstStart():
+def firststart():
     print("Hello from Mateusz Perczak and Krzysztof Zawisła")
     global directory
     if os.path.exists('Data.sou'):
@@ -79,165 +82,166 @@ def FirstStart():
     if directory == "" or None:
         exit("Directory is empty!!")
     mixer.init()
-    MusicScan()
+    musicscan()
 
 
-def ChangeDirectory(event):
+def changedirectory(event):
+    print(event)
     global directory
-    global SounderDirectory
-    global State
-    global MaxSong
-    global ListOfSongs
-    global DirectoryLabelText
+    global sounderdirectory
+    global state
+    global maxsong
+    global listofsongs
     newdirectory = askdirectory()
     if directory != newdirectory and newdirectory != "" or None:
-        os.chdir(SounderDirectory)
+        os.chdir(sounderdirectory)
         with open('Data.sou', 'w') as data:
             data.write(newdirectory)
-        ListOfSongs = []
-        for file in range(MaxSong + 1):
+        listofsongs = []
+        for file in range(maxsong + 1):
             MusicListBox.delete(0)
         directory = newdirectory
         DirectoryLabelText.set(directory)
-        MusicScan()
-        Update(State)
+        musicscan()
+        update(state)
 
 
-def Update(state):
-    global ListOfSongs
-    global MaxSong
-    if state == 1:
-        ListOfSongs.reverse()
-        for file in ListOfSongs:
+def update(cstate):
+    global listofsongs
+    global maxsong
+    if cstate == 1:
+        listofsongs.reverse()
+        for file in listofsongs:
             MusicListBox.insert(0, file)
-        ListOfSongs.reverse()
-    elif state == 0:
+        listofsongs.reverse()
+    elif cstate == 0:
         MusicListBox.delete(0, END)
-        MaxSong = 0
-        ListOfSongs = []
+        maxsong = 0
+        listofsongs = []
 
 
-def Play(event):
-    global PlayButtonState
-    global PlayedState
-    global SongNumber
-    global ListOfSongs
-    global State
-    global Curent
-    if State == 1:
-        if PlayButtonState == 1:
+def playsong(event):
+    print(event)
+    global playbuttonstate
+    global songnumber
+    global listofsongs
+    global state
+    if state == 1:
+        if playbuttonstate == 1:
             mixer.music.stop()
             time.sleep(0.1)
             PlayButton.configure(image=Playimg)
-            PlayButtonState = 0
-        elif PlayButtonState == 0:
-            mixer.music.load(ListOfSongs[SongNumber])
-            PlayLabelText.set(ListOfSongs[SongNumber])
+            playbuttonstate = 0
+        elif playbuttonstate == 0:
+            mixer.music.load(listofsongs[songnumber])
+            PlayLabelText.set(listofsongs[songnumber])
             mixer.music.play()
             PlayButton.configure(image=Pauseimg)
-            PlayButtonState = 1
-            ProgressUpdate()
-    elif State == 0:
-        if PlayButtonState == 1:
+            playbuttonstate = 1
+            progressupdate()
+    elif state == 0:
+        if playbuttonstate == 1:
             mixer.music.stop()
             time.sleep(0.1)
             PlayLabelText.set("")
             PlayButton.configure(image=Playimg)
-            PlayButtonState = 0
+            playbuttonstate = 0
 
 
-def Next(event):
-    global PlayButtonState
-    global SongNumber
-    global State
-    global MaxSong
-    if State == 1:
-        if PlayButtonState == 1:
-            if SongNumber < MaxSong - 1:
+def nextsong(event):
+    print(event)
+    global playbuttonstate
+    global songnumber
+    global state
+    global maxsong
+    if state == 1:
+        if playbuttonstate == 1:
+            if songnumber < maxsong - 1:
                 mixer.music.stop()
                 time.sleep(0.1)
                 PlayButton.configure(image=Pauseimg)
-                PlayButtonState = 1
-                SongNumber += 1
-                mixer.music.load(ListOfSongs[SongNumber])
+                playbuttonstate = 1
+                songnumber += 1
+                mixer.music.load(listofsongs[songnumber])
                 mixer.music.play()
-                PlayLabelText.set(ListOfSongs[SongNumber])
-                ProgressUpdate()
-        if PlayButtonState == 0:
-            if SongNumber < MaxSong - 1:
+                PlayLabelText.set(listofsongs[songnumber])
+                progressupdate()
+        if playbuttonstate == 0:
+            if songnumber < maxsong - 1:
                 mixer.music.stop()
                 time.sleep(0.1)
-                PlayButtonState = 1
+                playbuttonstate = 1
                 PlayButton.configure(image=Pauseimg)
-                SongNumber += 1
-                mixer.music.load(ListOfSongs[SongNumber])
+                songnumber += 1
+                mixer.music.load(listofsongs[songnumber])
                 mixer.music.play()
-                PlayLabelText.set(ListOfSongs[SongNumber])
-                ProgressUpdate()
+                PlayLabelText.set(listofsongs[songnumber])
+                progressupdate()
 
 
-def Previous(event):
-    global PlayButtonState
-    global SongNumber
-    global State
-    global PlayingStatus
-    global MaxSong
-    if State == 1:
-        if PlayButtonState == 1:
-            if SongNumber > 0:
+def previoussong(event):
+    print(event)
+    global playbuttonstate
+    global songnumber
+    global state
+    if state == 1:
+        if playbuttonstate == 1:
+            if songnumber > 0:
                 mixer.music.stop()
                 time.sleep(0.1)
                 PlayButton.configure(image=Pauseimg)
-                SongNumber -= 1
-                mixer.music.load(ListOfSongs[SongNumber])
+                songnumber -= 1
+                mixer.music.load(listofsongs[songnumber])
                 mixer.music.play()
-                PlayLabelText.set(ListOfSongs[SongNumber])
-                ProgressUpdate()
-        if PlayButtonState == 0:
-            if SongNumber > 0:
+                PlayLabelText.set(listofsongs[songnumber])
+                progressupdate()
+        if playbuttonstate == 0:
+            if songnumber > 0:
                 mixer.music.stop()
                 time.sleep(0.1)
-                PlayButtonState = 1
+                playbuttonstate = 1
                 PlayButton.configure(image=Pauseimg)
-                SongNumber -= 1
-                mixer.music.load(ListOfSongs[SongNumber])
+                songnumber -= 1
+                mixer.music.load(listofsongs[songnumber])
                 mixer.music.play()
-                PlayLabelText.set(ListOfSongs[SongNumber])
-                ProgressUpdate()
+                PlayLabelText.set(listofsongs[songnumber])
+                progressupdate()
 
 
-def MusicListBoxPointer(event):
-    global Try
-    global Selected
-    global Curent
-    global State
-    global SongNumber
-    global PlayButtonState
-    Try += 1
-    if Try == 2:
+def musiclistboxpointer(event):
+    print(event)
+    global tryv
+    global selected
+    global curent
+    global state
+    global songnumber
+    global playbuttonstate
+    global listofsongs
+    tryv += 1
+    if tryv == 2:
         mixer.music.stop()
         time.sleep(0.1)
-        if State == 1:
-            Selected = MusicListBox.curselection()
-            if Selected != ():
+        if state == 1:
+            selected = MusicListBox.curselection()
+            if selected != ():
                 mixer.music.stop()
                 time.sleep(0.1)
-                for Song in Selected:
-                    Curent = MusicListBox.get(Song)
-                for nr, Song in enumerate(ListOfSongs):
-                    if Song == Curent:
-                        mixer.music.load(ListOfSongs[nr])
-                        SongNumber = nr
+                for Song in selected:
+                    curent = MusicListBox.get(Song)
+                for nr, Song in enumerate(listofsongs):
+                    if Song == curent:
+                        mixer.music.load(listofsongs[nr])
+                        songnumber = nr
                         mixer.music.play()
-                        if PlayButtonState == 0:
-                            PlayButtonState = 1
+                        if playbuttonstate == 0:
+                            playbuttonstate = 1
                             PlayButton.configure(image=Pauseimg)
-                        PlayLabelText.set(ListOfSongs[SongNumber])
-                        ProgressUpdate()
-                        Try = 0
+                        PlayLabelText.set(listofsongs[songnumber])
+                        progressupdate()
+                        tryv = 0
 
 
-def Volume(value):
+def volume(value):
     global VolumeValue
     value = float(value)
     value = round(value, 0)
@@ -247,62 +251,64 @@ def Volume(value):
     mixer.music.set_volume(value)
 
 
-def ProgressUpdate():
-    global ListOfSongs
-    global SongNumber
-    global PlayButtonState
-    File = MP3(ListOfSongs[SongNumber])
-    BitrateVar = File.info.bitrate
-    BitrateVar = BitrateVar /1000
-    BitrateVar = int(BitrateVar)
-    BitrateLabelText.set("{}kbps".format(BitrateVar))
+def progressupdate():
+    global listofsongs
+    global songnumber
+    global playbuttonstate
+    file = MP3(listofsongs[songnumber])
+    bitratevar = file.info.bitrate
+    bitratevar = bitratevar / 1000
+    bitratevar = int(bitratevar)
+    BitrateLabelText.set("{}kbps".format(bitratevar))
     try:
-        FileInfo = File.tags['TCON']
-        GenreLabelText.set(FileInfo)
+        fileinfo = file.tags['TCON']
+        GenreLabelText.set(fileinfo)
     except:
         GenreLabelText.set("None")
-    ProgressValue = round(File.info.length, 1)
-    ProgressValue = ProgressValue * 10
-    ProgressValue = int(ProgressValue)
-    if PlayButtonState == 0:
+    progressvalue = round(file.info.length, 1)
+    progressvalue = progressvalue * 10
+    progressvalue = int(progressvalue)
+    if playbuttonstate == 0:
         PlayButton.configure(image=Pauseimg)
-    PBF = threading.Thread(target=ProgressBarFill, args=(ProgressValue,))
-    PBF.daemon = True
-    PBF.start()
+    pbf = threading.Thread(target=progressbarfill, args=(progressvalue,))
+    pbf.daemon = True
+    pbf.start()
 
 
-def ProgressBarFill(TotalLength):
-    global PlayButtonState
-    MusicProgressBar["maximum"] = TotalLength
-    Elapsed = 0
-    while Elapsed <= TotalLength and mixer.music.get_busy():
-        Elapsed += 1
-        MusicProgressBar["value"] = Elapsed
+def progressbarfill(totallength):
+    global playbuttonstate
+    MusicProgressBar["maximum"] = totallength
+    elapsed = 0
+    while elapsed <= totallength and mixer.music.get_busy():
+        elapsed += 1
+        MusicProgressBar["value"] = elapsed
         time.sleep(0.1)
-    if Elapsed > TotalLength - 30:
+    if elapsed > totallength - 30:
         PlayButton.configure(image=Playimg)
-        PlayButtonState = 0
+        playbuttonstate = 0
 
 
-def Close():
+def close():
     mixer.music.stop()
     PlayerForm.destroy()
 
 
-FirstStart()
-MusicProgressBar = ttk.Progressbar(PlayerForm, orient=HORIZONTAL, length=200, mode="determinate", style="G.Horizontal.TProgressbar")
+firststart()
+MusicProgressBar = ttk.Progressbar(PlayerForm, orient=HORIZONTAL, length=200, mode="determinate",
+                                   style="G.Horizontal.TProgressbar")
 PlayLabel = ttk.Label(PlayerForm, textvariable=PlayLabelText, font="Calibri", style="W.TLabel")
 GenreLabel = ttk.Label(PlayerForm, textvariable=GenreLabelText, font="Calibri", style="W.TLabel")
 PlayBitrate = ttk.Label(PlayerForm, textvariable=BitrateLabelText, font="Calibri", style="W.TLabel")
 VerLabel = ttk.Label(PlayerForm, text="Ver. 03.02.2019", font="Calibri", style="W.TLabel")
 DirectoryChangeButton = ttk.Button(PlayerForm, image=Fileimg, cursor="hand2", takefocus=0)
-DirectoryLabel = ttk.Label(PlayerForm, font="Calibri",textvariable=DirectoryLabelText,  style="W.TLabel")
+DirectoryLabel = ttk.Label(PlayerForm, font="Calibri", textvariable=DirectoryLabelText, style="W.TLabel")
 PlayButton = ttk.Button(PlayerForm, image=Pauseimg, cursor="hand2", takefocus=0)
 NextButton = ttk.Button(PlayerForm, image=Forwardimg, cursor="hand2", takefocus=0)
 PreviousButton = ttk.Button(PlayerForm, image=Previousimg, cursor="hand2", takefocus=0)
-MusicListBox = Listbox(PlayerForm, font="Calibri", cursor="hand2", bd=0, activestyle="none", selectbackground="#8bc34a", takefocus=0)
+MusicListBox = Listbox(PlayerForm, font="Calibri", cursor="hand2", bd=0, activestyle="none", selectbackground="#8bc34a",
+                       takefocus=0)
 PlayImg = ttk.Label(PlayerForm, image=PlayPhotoimg, style="W.TLabel")
-VolumeSlider = ttk.Scale(PlayerForm, from_=0, to=100, orient=HORIZONTAL, command=Volume, cursor="hand2")
+VolumeSlider = ttk.Scale(PlayerForm, from_=0, to=100, orient=HORIZONTAL, command=volume, cursor="hand2")
 VolumeLabel = ttk.Label(PlayerForm, textvariable=VolumeValue, font="Calibri", style="W.TLabel")
 MusicLabel = ttk.Label(PlayerForm, image=MusicLabelimg, style="W.TLabel")
 mixer.music.set_volume(0.50)
@@ -312,7 +318,7 @@ GenreLabelText.set("")
 PlayLabelText.set("No song is playing!")
 BitrateLabelText.set("")
 DirectoryLabelText.set(directory)
-Update(State)
+update(state)
 PlayButton.configure(image=Playimg)
 MusicProgressBar.place(x=1, y=492, width=803, height=9)
 DirectoryChangeButton.place(x=0, y=0)
@@ -329,10 +335,10 @@ PlayImg.place(x=4, y=435)
 VolumeSlider.place(x=650, y=454)
 VolumeLabel.place(x=756, y=449)
 VerLabel.place(x=690, y=2)
-PlayButton.bind("<Button-1>", Play)
-PreviousButton.bind("<Button-1>", Previous)
-NextButton.bind("<Button-1>", Next)
-MusicListBox.bind("<Button-1>", MusicListBoxPointer)
-DirectoryChangeButton.bind("<Button-1>", ChangeDirectory)
-PlayerForm.protocol("WM_DELETE_WINDOW", Close)
+PlayButton.bind("<Button-1>", playsong)
+PreviousButton.bind("<Button-1>", previoussong)
+NextButton.bind("<Button-1>", nextsong)
+MusicListBox.bind("<Button-1>", musiclistboxpointer)
+DirectoryChangeButton.bind("<Button-1>", changedirectory)
+PlayerForm.protocol("WM_DELETE_WINDOW", close)
 PlayerForm.mainloop()
