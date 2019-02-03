@@ -9,7 +9,7 @@ Helper: Krzysztof Zawisła
 3.6.8
 
 ## Used Libraries 
-+ mutagen.mp3
++ mutagen
 + pygame
 + threading
 + os 
