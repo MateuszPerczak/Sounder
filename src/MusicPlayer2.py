@@ -273,17 +273,15 @@ def ProgressUpdate():
 
 def ProgressBarFill(TotalLength):
     global PlayButtonState
-    Target = 0
     MusicProgressBar["maximum"] = TotalLength
-    Elapsed = 1
+    Elapsed = 0
     while Elapsed <= TotalLength and mixer.music.get_busy():
         Elapsed += 1
         MusicProgressBar["value"] = Elapsed
-        if Elapsed == TotalLength - 15 and Target != 1:
-            Target = 1
-            PlayButton.configure(image=Playimg)
-            PlayButtonState = 0
         time.sleep(0.1)
+    if Elapsed > TotalLength - 30:
+        PlayButton.configure(image=Playimg)
+        PlayButtonState = 0
 
 
 def Close():
