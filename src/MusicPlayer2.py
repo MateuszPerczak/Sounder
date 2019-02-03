@@ -6,7 +6,6 @@ from pygame import mixer
 from tkinter import *
 from tkinter import ttk
 from tkinter.filedialog import askdirectory
-
 PlayerForm = Tk()
 PlayerForm.geometry('800x500')
 PlayerForm.title("Sounder!")
@@ -37,8 +36,7 @@ Forwardimg = PhotoImage(file="forward.png")
 Previousimg = PhotoImage(file="previous.png")
 Fileimg = PhotoImage(file="file-directory.png")
 MusicLabelimg = PhotoImage(file="sounder.png")
-
-
+SounderDirectory = os.getcwd()
 def MusicScan():
     global directory
     global MaxSong
@@ -48,7 +46,17 @@ def MusicScan():
     global SongNumber
     State = 0
     SongNumber = 0
-    os.chdir(directory)
+    try:
+        os.chdir(directory)
+    except:
+        os.chdir(SounderDirectory)
+        os.remove('Data.sou')
+        directory = askdirectory()
+        if directory == "" or None:
+            exit("Directory is empty!!")
+        with open('Data.sou', 'a')as data:
+            data.write(directory)
+        os.chdir(directory)
     for file in os.listdir(directory):
         if file.endswith(".mp3"):
             MaxSong += 1
@@ -61,10 +69,13 @@ def MusicScan():
 def FirstStart():
     print("Hello from Mateusz Perczak and Krzysztof Zawisła")
     global directory
-    global ListOfSongs
-    global SongNumber
-    global State
-    directory = askdirectory()
+    if os.path.exists('Data.sou'):
+        with open('Data.sou', 'r') as data:
+            directory = data.readline()
+    elif not os.path.exists('Data.sou'):
+        directory = askdirectory()
+        with open('Data.sou', 'a')as data:
+            data.write(directory)
     if directory == "" or None:
         exit("Directory is empty!!")
     mixer.init()
@@ -73,12 +84,16 @@ def FirstStart():
 
 def ChangeDirectory(event):
     global directory
+    global SounderDirectory
     global State
     global MaxSong
     global ListOfSongs
     global DirectoryLabelText
     newdirectory = askdirectory()
     if directory != newdirectory and newdirectory != "" or None:
+        os.chdir(SounderDirectory)
+        with open('Data.sou', 'w') as data:
+            data.write(newdirectory)
         ListOfSongs = []
         for file in range(MaxSong + 1):
             MusicListBox.delete(0)
@@ -281,7 +296,7 @@ MusicProgressBar = ttk.Progressbar(PlayerForm, orient=HORIZONTAL, length=200, mo
 PlayLabel = ttk.Label(PlayerForm, textvariable=PlayLabelText, font="Calibri", style="W.TLabel")
 GenreLabel = ttk.Label(PlayerForm, textvariable=GenreLabelText, font="Calibri", style="W.TLabel")
 PlayBitrate = ttk.Label(PlayerForm, textvariable=BitrateLabelText, font="Calibri", style="W.TLabel")
-VerLabel = ttk.Label(PlayerForm, text="Ver. 02.02.2019", font="Calibri", style="W.TLabel")
+VerLabel = ttk.Label(PlayerForm, text="Ver. 03.02.2019", font="Calibri", style="W.TLabel")
 DirectoryChangeButton = ttk.Button(PlayerForm, image=Fileimg, cursor="hand2", takefocus=0)
 DirectoryLabel = ttk.Label(PlayerForm, font="Calibri",textvariable=DirectoryLabelText,  style="W.TLabel")
 PlayButton = ttk.Button(PlayerForm, image=Pauseimg, cursor="hand2", takefocus=0)
