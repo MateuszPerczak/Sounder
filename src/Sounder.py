@@ -15,8 +15,7 @@ PlayerForm.iconbitmap("Soundericon.ico")
 PlayerForm.configure(background='#ffffff')
 s = ttk.Style()
 s.theme_use('clam')
-s.configure("G.Horizontal.TProgressbar", foreground='#8bc34a', background='#8bc34a', lightcolor='#8bc34a',
-            darkcolor='#8bc34a', bordercolor='#ffffff', troughcolor='#ffffff')
+s.configure("G.Horizontal.TProgressbar", foreground='#8bc34a', background='#8bc34a', lightcolor='#8bc34a', darkcolor='#8bc34a', bordercolor='#ffffff', troughcolor='#ffffff')
 s.configure("W.TLabel", background='#ffffff', border='0')
 tryv = 0
 PlayLabelText = StringVar()
@@ -52,11 +51,11 @@ def musicscan():
         os.chdir(directory)
     except:
         os.chdir(sounderdirectory)
-        os.remove('Data.sou')
+        os.remove('.settings')
         directory = askdirectory()
         if directory == "" or None:
             exit("Directory is empty!!")
-        with open('Data.sou', 'a')as data:
+        with open('.settings', 'a')as data:
             data.write(directory)
         os.chdir(directory)
     for file in os.listdir(directory):
@@ -69,14 +68,13 @@ def musicscan():
 
 
 def firststart():
-    print("Hello from Mateusz Perczak and Krzysztof Zawisła")
     global directory
-    if os.path.exists('Data.sou'):
-        with open('Data.sou', 'r') as data:
+    if os.path.exists('.settings'):
+        with open('.settings', 'r') as data:
             directory = data.readline()
     elif not os.path.exists('Data.sou'):
         directory = askdirectory()
-        with open('Data.sou', 'a')as data:
+        with open('.settings', 'a')as data:
             data.write(directory)
     if directory == "" or None:
         exit("Directory is empty!!")
@@ -94,7 +92,7 @@ def changedirectory(event):
     newdirectory = askdirectory()
     if directory != newdirectory and newdirectory != "" or None:
         os.chdir(sounderdirectory)
-        with open('Data.sou', 'w') as data:
+        with open('.settings', 'w') as data:
             data.write(newdirectory)
         listofsongs = []
         for file in range(maxsong + 1):
@@ -243,7 +241,6 @@ def musiclistboxpointer(event):
     tryv += 1
     if tryv == 2:
         mixer.music.stop()
-        time.sleep(0.1)
         if state == 1:
             selected = MusicListBox.curselection()
             if selected != ():
@@ -288,7 +285,7 @@ def progressupdate():
         GenreLabelText.set(fileinfo)
     except:
         GenreLabelText.set("None")
-    progressvalue = round(file.info.length, 1)
+    progressvalue = round(file.info.length, 2)
     progressvalue = progressvalue * 10
     progressvalue = int(progressvalue)
     if playbuttonstate == 0:
@@ -301,7 +298,7 @@ def progressupdate():
 def progressbarfill(totallength):
     global playbuttonstate
     MusicProgressBar["maximum"] = totallength
-    elapsed = 10
+    elapsed = 18
     while elapsed <= totallength and mixer.music.get_busy():
         elapsed += 1
         MusicProgressBar["value"] = elapsed
@@ -317,18 +314,18 @@ def close():
 
 
 firststart()
-MusicProgressBar = ttk.Progressbar(PlayerForm, orient=HORIZONTAL, length=200, mode="determinate",style="G.Horizontal.TProgressbar")
+MusicProgressBar = ttk.Progressbar(PlayerForm, orient=HORIZONTAL, length=200, mode="determinate", style="G.Horizontal.TProgressbar")
 PlayLabel = ttk.Label(PlayerForm, textvariable=PlayLabelText, font="Calibri", style="W.TLabel")
 GenreLabel = ttk.Label(PlayerForm, textvariable=GenreLabelText, font="Calibri", style="W.TLabel")
 PlayBitrate = ttk.Label(PlayerForm, textvariable=BitrateLabelText, font="Calibri", style="W.TLabel")
-VerLabel = ttk.Label(PlayerForm, text="Ver. 03.02.2019", font="Calibri", style="W.TLabel")
+VerLabel = ttk.Label(PlayerForm, text="Ver. 05.02.2019", font="Calibri", style="W.TLabel")
 DirectoryChangeButton = ttk.Button(PlayerForm, image=Fileimg, cursor="hand2", takefocus=0)
 RefreshButton = ttk.Button(PlayerForm, image=RefreshLabelimg, cursor="hand2", takefocus=0)
 DirectoryLabel = ttk.Label(PlayerForm, font="Calibri", textvariable=DirectoryLabelText, style="W.TLabel")
 PlayButton = ttk.Button(PlayerForm, image=Pauseimg, cursor="hand2", takefocus=0)
 NextButton = ttk.Button(PlayerForm, image=Forwardimg, cursor="hand2", takefocus=0)
 PreviousButton = ttk.Button(PlayerForm, image=Previousimg, cursor="hand2", takefocus=0)
-MusicListBox = Listbox(PlayerForm, font="Calibri", cursor="hand2", bd=0, activestyle="none", selectbackground="#8bc34a",takefocus=0)
+MusicListBox = Listbox(PlayerForm, font="Calibri", cursor="hand2", bd=0, activestyle="none", selectbackground="#8bc34a", takefocus=0)
 PlayImg = ttk.Label(PlayerForm, image=PlayPhotoimg, style="W.TLabel")
 VolumeSlider = ttk.Scale(PlayerForm, from_=0, to=100, orient=HORIZONTAL, command=volume, cursor="hand2")
 VolumeLabel = ttk.Label(PlayerForm, textvariable=VolumeValue, font="Calibri", style="W.TLabel")
@@ -344,12 +341,13 @@ DirectoryLabelText.set(directory)
 update(state)
 PlayButton.configure(image=Playimg)
 # End
+#Coordinates
 MusicProgressBar.place(x=1, y=492, width=800, height=9)
 DirectoryChangeButton.place(x=32, y=0)
 RefreshButton.place(x=0, y=0)
 MusicLabel.place(x=560, y=180)
 DirectoryLabel.place(x=66, y=2, width=651, height=28)
-MusicListBox.place(x=0, y=32, width=400, height=380)
+MusicListBox.place(x=0, y=32, width=400, height=388)
 PlayLabel.place(x=62, y=436)
 PlayBitrate.place(x=62, y=460)
 GenreLabel.place(x=121, y=460)
@@ -360,6 +358,7 @@ PlayImg.place(x=4, y=435)
 VolumeSlider.place(x=650, y=454)
 VolumeLabel.place(x=756, y=449)
 VerLabel.place(x=690, y=2)
+#binds
 PlayButton.bind("<Button-1>", playsong)
 PreviousButton.bind("<Button-1>", previoussong)
 NextButton.bind("<Button-1>", nextsong)
