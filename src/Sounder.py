@@ -71,7 +71,7 @@ def firststart():
     if os.path.exists('.settings'):
         with open('.settings', 'r') as data:
             directory = data.readline()
-    elif not os.path.exists('Data.sou'):
+    elif not os.path.exists('.settings'):
         directory = askdirectory()
         with open('.settings', 'a')as data:
             data.write(directory)
@@ -297,7 +297,7 @@ def progressupdate():
 def progressbarfill(totallength):
     global playbuttonstate
     MusicProgressBar["maximum"] = totallength
-    elapsed = 18
+    elapsed = 16
     while elapsed <= totallength and mixer.music.get_busy():
         elapsed += 1
         MusicProgressBar["value"] = elapsed
@@ -317,7 +317,7 @@ MusicProgressBar = ttk.Progressbar(PlayerForm, orient=HORIZONTAL, length=200, mo
 PlayLabel = ttk.Label(PlayerForm, textvariable=PlayLabelText, font="Calibri", style="W.TLabel")
 GenreLabel = ttk.Label(PlayerForm, textvariable=GenreLabelText, font="Calibri", style="W.TLabel")
 PlayBitrate = ttk.Label(PlayerForm, textvariable=BitrateLabelText, font="Calibri", style="W.TLabel")
-VerLabel = ttk.Label(PlayerForm, text="Ver. 05.02.2019", font="Calibri", style="W.TLabel")
+VerLabel = ttk.Label(PlayerForm, text="Ver. 2.5.4", font="Calibri", style="W.TLabel")
 DirectoryChangeButton = ttk.Button(PlayerForm, image=Fileimg, cursor="hand2", takefocus=0)
 RefreshButton = ttk.Button(PlayerForm, image=RefreshLabelimg, cursor="hand2", takefocus=0)
 DirectoryLabel = ttk.Label(PlayerForm, font="Calibri", textvariable=DirectoryLabelText, style="W.TLabel")
@@ -354,7 +354,7 @@ NextButton.place(x=590, y=442)
 PlayImg.place(x=4, y=435)
 VolumeSlider.place(x=650, y=454)
 VolumeLabel.place(x=756, y=449)
-VerLabel.place(x=690, y=2)
+VerLabel.place(x=730, y=4)
 #binds
 PlayButton.bind("<Button-1>", playsong)
 PreviousButton.bind("<Button-1>", previoussong)
