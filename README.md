@@ -17,6 +17,6 @@ Helper: Krzysztof Zawisła
 + tkinter
 
 ## Some pictures of application
-![Picture of playing music in application](https://github.com/losek1/Py_MusicPlayer/blob/master/images/sounder_1.PNG)
-![Picture of playing music in application](https://github.com/losek1/Py_MusicPlayer/blob/master/images/sounder_2.PNG)
-![Picture without any playing song](https://github.com/losek1/Py_MusicPlayer/blob/master/images/sounder_3.PNG)
+![Picture of playing music in application](https://github.com/losek1/Py_MusicPlayer/blob/master/images/S1.PNG)
+![Picture of playing music in application](https://github.com/losek1/Py_MusicPlayer/blob/master/images/S2.PNG)
+![Picture without any playing song](https://github.com/losek1/Py_MusicPlayer/blob/master/images/S3.PNG)
