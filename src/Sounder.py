@@ -154,7 +154,10 @@ def playsong(event):
             playbuttonstate = 0
         elif playbuttonstate == 0:
             mixer.music.load(listofsongs[songnumber])
-            PlayLabelText.set(listofsongs[songnumber])
+            if len(listofsongs[songnumber]) > 50:
+                PlayLabelText.set(listofsongs[songnumber][0:50] + "....mp3")
+            else:
+                PlayLabelText.set(listofsongs[songnumber])
             mixer.music.play()
             PlayButton.configure(image=Pauseimg)
             playbuttonstate = 1
@@ -184,7 +187,10 @@ def nextsong(event):
                 songnumber += 1
                 mixer.music.load(listofsongs[songnumber])
                 mixer.music.play()
-                PlayLabelText.set(listofsongs[songnumber])
+                if len(listofsongs[songnumber]) > 50:
+                    PlayLabelText.set(listofsongs[songnumber][0:50] + "....mp3")
+                else:
+                    PlayLabelText.set(listofsongs[songnumber])
                 progressupdate()
         if playbuttonstate == 0:
             if songnumber < maxsong - 1:
@@ -195,7 +201,10 @@ def nextsong(event):
                 songnumber += 1
                 mixer.music.load(listofsongs[songnumber])
                 mixer.music.play()
-                PlayLabelText.set(listofsongs[songnumber])
+                if len(listofsongs[songnumber]) > 50:
+                    PlayLabelText.set(listofsongs[songnumber][0:50] + "....mp3")
+                else:
+                    PlayLabelText.set(listofsongs[songnumber])
                 progressupdate()
 
 
@@ -213,7 +222,10 @@ def previoussong(event):
                 songnumber -= 1
                 mixer.music.load(listofsongs[songnumber])
                 mixer.music.play()
-                PlayLabelText.set(listofsongs[songnumber])
+                if len(listofsongs[songnumber]) > 50:
+                    PlayLabelText.set(listofsongs[songnumber][0:50] + "....mp3")
+                else:
+                    PlayLabelText.set(listofsongs[songnumber])
                 progressupdate()
         if playbuttonstate == 0:
             if songnumber > 0:
@@ -224,7 +236,10 @@ def previoussong(event):
                 songnumber -= 1
                 mixer.music.load(listofsongs[songnumber])
                 mixer.music.play()
-                PlayLabelText.set(listofsongs[songnumber])
+                if len(listofsongs[songnumber]) > 50:
+                    PlayLabelText.set(listofsongs[songnumber][0:50] + "....mp3")
+                else:
+                    PlayLabelText.set(listofsongs[songnumber])
                 progressupdate()
 
 
@@ -255,7 +270,10 @@ def musiclistboxpointer(event):
                         if playbuttonstate == 0:
                             playbuttonstate = 1
                             PlayButton.configure(image=Pauseimg)
-                        PlayLabelText.set(listofsongs[songnumber])
+                        if len(listofsongs[songnumber]) > 50:
+                            PlayLabelText.set(listofsongs[songnumber][0:50] + "....mp3")
+                        else:
+                            PlayLabelText.set(listofsongs[songnumber])
                         progressupdate()
                         tryv = 0
 
@@ -317,7 +335,7 @@ MusicProgressBar = ttk.Progressbar(PlayerForm, orient=HORIZONTAL, length=200, mo
 PlayLabel = ttk.Label(PlayerForm, textvariable=PlayLabelText, font="Calibri", style="W.TLabel")
 GenreLabel = ttk.Label(PlayerForm, textvariable=GenreLabelText, font="Calibri", style="W.TLabel")
 PlayBitrate = ttk.Label(PlayerForm, textvariable=BitrateLabelText, font="Calibri", style="W.TLabel")
-VerLabel = ttk.Label(PlayerForm, text="Ver. 2.5.4", font="Calibri", style="W.TLabel")
+VerLabel = ttk.Label(PlayerForm, text="Ver. 2.5.5", font="Calibri", style="W.TLabel")
 DirectoryChangeButton = ttk.Button(PlayerForm, image=Fileimg, cursor="hand2", takefocus=0)
 RefreshButton = ttk.Button(PlayerForm, image=RefreshLabelimg, cursor="hand2", takefocus=0)
 DirectoryLabel = ttk.Label(PlayerForm, font="Calibri", textvariable=DirectoryLabelText, style="W.TLabel")
