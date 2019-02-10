@@ -320,13 +320,24 @@ def progressbarfill(totallength):
         MusicProgressBar["value"] = elapsed
         time.sleep(0.1)
     if elapsed >= totallength - 50:
+        PlayButton.configure(image=Playimg)
+        playbuttonstate = 0
+        playmode()
+
+
+def playmode():
+    global mode
+    global playbuttonstate
+    global songnumber
+    global maxsong
+    global listofsongs
+    global state
+    if state == 1:
+        time.sleep(1)
         if mode == 0:
-            PlayButton.configure(image=Playimg)
-            playbuttonstate = 0
+            if songnumber < maxsong:
+                nextsong()
         elif mode == 1:
-            PlayButton.configure(image=Playimg)
-            playbuttonstate = 0
-            time.sleep(1.5)
             playsong()
 
 
