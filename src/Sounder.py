@@ -81,8 +81,7 @@ def firststart():
     musicscan()
 
 
-def changedirectory(event):
-    print(event)
+def changedirectory():
     global directory
     global sounderdirectory
     global state
@@ -119,8 +118,7 @@ def update(cstate):
         print("Unexpected char")
 
 
-def refreshdirectory(event):
-    print(event)
+def refreshdirectory():
     global directory
     global maxsong
     global listofsongs
@@ -140,8 +138,7 @@ def refreshdirectory(event):
     listofsongs.reverse()
 
 
-def playsong(event):
-    print(event)
+def playsong():
     global playbuttonstate
     global songnumber
     global listofsongs
@@ -171,8 +168,7 @@ def playsong(event):
             playbuttonstate = 0
 
 
-def nextsong(event):
-    print(event)
+def nextsong():
     global playbuttonstate
     global songnumber
     global state
@@ -208,8 +204,7 @@ def nextsong(event):
                 progressupdate()
 
 
-def previoussong(event):
-    print(event)
+def previoussong():
     global playbuttonstate
     global songnumber
     global state
@@ -335,13 +330,13 @@ MusicProgressBar = ttk.Progressbar(PlayerForm, orient=HORIZONTAL, length=200, mo
 PlayLabel = ttk.Label(PlayerForm, textvariable=PlayLabelText, font="Calibri", style="W.TLabel")
 GenreLabel = ttk.Label(PlayerForm, textvariable=GenreLabelText, font="Calibri", style="W.TLabel")
 PlayBitrate = ttk.Label(PlayerForm, textvariable=BitrateLabelText, font="Calibri", style="W.TLabel")
-VerLabel = ttk.Label(PlayerForm, text="Ver. 2.5.5", font="Calibri", style="W.TLabel")
-DirectoryChangeButton = ttk.Button(PlayerForm, image=Fileimg, cursor="hand2", takefocus=0)
-RefreshButton = ttk.Button(PlayerForm, image=RefreshLabelimg, cursor="hand2", takefocus=0)
+VerLabel = ttk.Label(PlayerForm, text="Ver. 2.5.6", font="Calibri", style="W.TLabel")
+DirectoryChangeButton = ttk.Button(PlayerForm, image=Fileimg, cursor="hand2", takefocus=0, command=changedirectory)
+RefreshButton = ttk.Button(PlayerForm, image=RefreshLabelimg, cursor="hand2", takefocus=0, command=refreshdirectory)
 DirectoryLabel = ttk.Label(PlayerForm, font="Calibri", textvariable=DirectoryLabelText, style="W.TLabel")
-PlayButton = ttk.Button(PlayerForm, image=Pauseimg, cursor="hand2", takefocus=0)
-NextButton = ttk.Button(PlayerForm, image=Forwardimg, cursor="hand2", takefocus=0)
-PreviousButton = ttk.Button(PlayerForm, image=Previousimg, cursor="hand2", takefocus=0)
+PlayButton = ttk.Button(PlayerForm, image=Pauseimg, cursor="hand2", takefocus=0, command=playsong)
+NextButton = ttk.Button(PlayerForm, image=Forwardimg, cursor="hand2", takefocus=0, command=nextsong)
+PreviousButton = ttk.Button(PlayerForm, image=Previousimg, cursor="hand2", takefocus=0, command=previoussong)
 MusicListBox = Listbox(PlayerForm, font="Calibri", cursor="hand2", bd=0, activestyle="none", selectbackground="#8bc34a", takefocus=0)
 PlayImg = ttk.Label(PlayerForm, image=PlayPhotoimg, style="W.TLabel")
 VolumeSlider = ttk.Scale(PlayerForm, from_=0, to=100, orient=HORIZONTAL, command=volume, cursor="hand2")
@@ -374,11 +369,6 @@ VolumeSlider.place(x=650, y=454)
 VolumeLabel.place(x=756, y=449)
 VerLabel.place(x=730, y=4)
 #binds
-PlayButton.bind("<Button-1>", playsong)
-PreviousButton.bind("<Button-1>", previoussong)
-NextButton.bind("<Button-1>", nextsong)
 MusicListBox.bind("<Button-1>", musiclistboxpointer)
-DirectoryChangeButton.bind("<Button-1>", changedirectory)
-RefreshButton.bind("<Button-1>", refreshdirectory)
 PlayerForm.protocol("WM_DELETE_WINDOW", close)
 PlayerForm.mainloop()
