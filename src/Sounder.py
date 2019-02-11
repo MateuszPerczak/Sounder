@@ -23,6 +23,8 @@ DirectoryLabelText = StringVar()
 GenreLabelText = StringVar()
 BitrateLabelText = StringVar()
 VolumeValue = StringVar()
+YearLabelText = StringVar()
+TimeLabelText = StringVar()
 listofsongs = []
 maxsong = 0
 playbuttonstate = 0
@@ -294,12 +296,22 @@ def progressupdate():
     bitratevar = file.info.bitrate
     bitratevar = bitratevar / 1000
     bitratevar = int(bitratevar)
-    BitrateLabelText.set("{}kbps".format(bitratevar))
+    BitrateLabelText.set("Bitrate: {}kbps".format(bitratevar))
     try:
         fileinfo = file.tags['TCON']
-        GenreLabelText.set(fileinfo)
+        GenreLabelText.set("Genre:  {}".format(fileinfo))
     except:
-        GenreLabelText.set("None")
+        GenreLabelText.set("Genre: Unknown")
+
+    try:
+        fileyear = file.tags['TDRC']
+        YearLabelText.set("Year: {}".format(fileyear))
+    except:
+        YearLabelText.set("Year: Unknown")
+    mins, secs = divmod(file.info.length, 60)
+    mins = int(mins)
+    secs = int(secs)
+    TimeLabelText.set("Time: {}:{}".format(mins, secs))
     progressvalue = round(file.info.length, 2)
     progressvalue = progressvalue * 10
     progressvalue = int(progressvalue)
@@ -350,6 +362,7 @@ def switchmode():
         mode = 0
         ModeButton.configure(image=Scuffle)
 
+
 def close():
     mixer.music.stop()
     PlayerForm.destroy()
@@ -360,7 +373,7 @@ MusicProgressBar = ttk.Progressbar(PlayerForm, orient=HORIZONTAL, length=200, mo
 PlayLabel = ttk.Label(PlayerForm, textvariable=PlayLabelText, font="Calibri", style="W.TLabel")
 GenreLabel = ttk.Label(PlayerForm, textvariable=GenreLabelText, font="Calibri", style="W.TLabel")
 PlayBitrate = ttk.Label(PlayerForm, textvariable=BitrateLabelText, font="Calibri", style="W.TLabel")
-VerLabel = ttk.Label(PlayerForm, text="Ver. 2.5.7", font="Calibri", style="W.TLabel")
+VerLabel = ttk.Label(PlayerForm, text="Ver. 2.5.8", font="Calibri", style="W.TLabel")
 DirectoryChangeButton = ttk.Button(PlayerForm, image=Fileimg, cursor="hand2", takefocus=0, command=changedirectory)
 RefreshButton = ttk.Button(PlayerForm, image=RefreshLabelimg, cursor="hand2", takefocus=0, command=refreshdirectory)
 DirectoryLabel = ttk.Label(PlayerForm, font="Calibri", textvariable=DirectoryLabelText, style="W.TLabel")
@@ -372,25 +385,36 @@ PlayImg = ttk.Label(PlayerForm, image=PlayPhotoimg, style="W.TLabel")
 VolumeSlider = ttk.Scale(PlayerForm, from_=0, to=100, orient=HORIZONTAL, command=volume, cursor="hand2")
 VolumeLabel = ttk.Label(PlayerForm, textvariable=VolumeValue, font="Calibri", style="W.TLabel")
 ModeButton = ttk.Button(PlayerForm, image=Scuffle, cursor="hand2", takefocus=0, command=switchmode)
+InfoLabel = ttk.Label(PlayerForm, text="File Info", font="Calibri", style="W.TLabel")
+YearLabel = ttk.Label(PlayerForm, textvariable=YearLabelText, font="Calibri", style="W.TLabel")
+TimeLabel = ttk.Label(PlayerForm, textvariable=TimeLabelText, font="Calibri", style="W.TLabel")
+Separator = ttk.Separator(PlayerForm, orient=HORIZONTAL)
 # SetUp
 mixer.music.set_volume(0.50)
 VolumeSlider.set(50)
 VolumeValue.set("50{}".format("%"))
-GenreLabelText.set("")
+GenreLabelText.set("Genre: ")
 PlayLabelText.set("No song is playing!")
-BitrateLabelText.set("")
+BitrateLabelText.set("Bitrate: ")
+YearLabelText.set("Year: ")
+TimeLabelText.set("Time: ")
 DirectoryLabelText.set(directory)
 update(state)
 # End
-#Coordinates
+# Coordinates
 MusicProgressBar.place(x=1, y=492, width=800, height=9)
 DirectoryChangeButton.place(x=32, y=0)
 RefreshButton.place(x=0, y=0)
 DirectoryLabel.place(x=66, y=2, width=651, height=28)
-MusicListBox.place(x=1, y=32, width=798, height=388)
-PlayLabel.place(x=62, y=436)
-PlayBitrate.place(x=62, y=460)
-GenreLabel.place(x=121, y=460)
+MusicListBox.place(x=1, y=32, width=550, height=388)
+PlayLabel.place(x=62, y=450)
+PlayBitrate.place(x=605, y=115)
+
+GenreLabel.place(x=605, y=85)
+InfoLabel.place(x=650, y=50)
+YearLabel.place(x=605, y=145)
+TimeLabel.place(x=605, y=175)
+
 PreviousButton.place(x=490, y=442)
 PlayButton.place(x=535, y=438)
 NextButton.place(x=590, y=442)
@@ -399,7 +423,8 @@ VolumeSlider.place(x=650, y=454)
 VolumeLabel.place(x=756, y=449)
 VerLabel.place(x=730, y=4)
 ModeButton.place(x=452, y=447)
-#binds
+Separator.place(x=600, y=80, width=150)
+# binds
 MusicListBox.bind("<Button-1>", musiclistboxpointer)
 PlayerForm.protocol("WM_DELETE_WINDOW", close)
 PlayerForm.mainloop()
