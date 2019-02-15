@@ -6,6 +6,7 @@ from pygame import mixer
 from tkinter import *
 from tkinter import ttk
 from tkinter.filedialog import askdirectory
+import tkinter.messagebox
 PlayerForm = Tk()
 PlayerForm.geometry('800x500')
 PlayerForm.title("Sounder!")
@@ -54,6 +55,7 @@ def musicscan():
     try:
         os.chdir(directory)
     except:
+        tkinter.messagebox.showwarning('Settings', 'Your settings file was corrupted!')
         os.chdir(sounderdirectory)
         os.remove('.settings')
         directory = askdirectory()
@@ -357,8 +359,12 @@ def switchmode():
 
 
 def close():
-    mixer.music.stop()
-    PlayerForm.destroy()
+    check = tkinter.messagebox.askquestion('Exit', 'Are you sure you want to quit?')
+    if check == 'yes':
+        mixer.music.stop()
+        PlayerForm.destroy()
+    else:
+        pass
 
 
 firststart()
