@@ -15,8 +15,8 @@ PlayerForm.iconbitmap("Soundericon.ico")
 PlayerForm.configure(background='#ffffff')
 s = ttk.Style()
 s.theme_use('clam')
-s.configure("G.Horizontal.TProgressbar", foreground='#8bc34a', background='#8bc34a', lightcolor='#8bc34a',
-            darkcolor='#8bc34a', bordercolor='#ffffff', troughcolor='#ffffff')
+s.configure("G.Horizontal.TProgressbar", foreground='#00000', background='#000000', lightcolor='#000000',
+            darkcolor='#ffffff', bordercolor='#ffffff', troughcolor='#ffffff')
 s.configure("W.TLabel", background='#ffffff', border='0')
 s.configure("TButton", background='#ffffff', relief="flat")
 tryv = 0
@@ -38,8 +38,9 @@ Forwardimg = PhotoImage(file="forward.png")
 Previousimg = PhotoImage(file="previous.png")
 Fileimg = PhotoImage(file="file-directory.png")
 RefreshLabelimg = PhotoImage(file="refresh.png")
-Scuffle = PhotoImage(file="shuffle.png")
-Repeat = PhotoImage(file="repeat.png")
+RepeatNone = PhotoImage(file="repeatnone.png")
+RepeatAll = PhotoImage(file="repeatall.png")
+RepeatOne = PhotoImage(file="repeatone.png")
 sounderdirectory = os.getcwd()
 
 
@@ -152,8 +153,8 @@ def playsong():
             playbuttonstate = 0
         elif playbuttonstate == 0:
             mixer.music.load(listofsongs[songnumber])
-            if len(listofsongs[songnumber]) > 50:
-                PlayLabelText.set(listofsongs[songnumber][0:50] + "...mp3")
+            if len(listofsongs[songnumber]) > 45:
+                PlayLabelText.set(listofsongs[songnumber][0:45] + "...mp3")
             else:
                 PlayLabelText.set(listofsongs[songnumber])
             mixer.music.play()
@@ -184,8 +185,8 @@ def nextsong():
                 songnumber += 1
                 mixer.music.load(listofsongs[songnumber])
                 mixer.music.play()
-                if len(listofsongs[songnumber]) > 50:
-                    PlayLabelText.set(listofsongs[songnumber][0:50] + "...mp3")
+                if len(listofsongs[songnumber]) > 45:
+                    PlayLabelText.set(listofsongs[songnumber][0:45] + "...mp3")
                 else:
                     PlayLabelText.set(listofsongs[songnumber])
                 preapir()
@@ -198,8 +199,8 @@ def nextsong():
                 songnumber += 1
                 mixer.music.load(listofsongs[songnumber])
                 mixer.music.play()
-                if len(listofsongs[songnumber]) > 50:
-                    PlayLabelText.set(listofsongs[songnumber][0:50] + "...mp3")
+                if len(listofsongs[songnumber]) > 45:
+                    PlayLabelText.set(listofsongs[songnumber][0:45] + "...mp3")
                 else:
                     PlayLabelText.set(listofsongs[songnumber])
                 preapir()
@@ -218,8 +219,8 @@ def previoussong():
                 songnumber -= 1
                 mixer.music.load(listofsongs[songnumber])
                 mixer.music.play()
-                if len(listofsongs[songnumber]) > 50:
-                    PlayLabelText.set(listofsongs[songnumber][0:50] + "...mp3")
+                if len(listofsongs[songnumber]) > 45:
+                    PlayLabelText.set(listofsongs[songnumber][0:45] + "...mp3")
                 else:
                     PlayLabelText.set(listofsongs[songnumber])
                 preapir()
@@ -232,8 +233,8 @@ def previoussong():
                 songnumber -= 1
                 mixer.music.load(listofsongs[songnumber])
                 mixer.music.play()
-                if len(listofsongs[songnumber]) > 50:
-                    PlayLabelText.set(listofsongs[songnumber][0:50] + "...mp3")
+                if len(listofsongs[songnumber]) > 45:
+                    PlayLabelText.set(listofsongs[songnumber][0:45] + "...mp3")
                 else:
                     PlayLabelText.set(listofsongs[songnumber])
                 preapir()
@@ -266,8 +267,8 @@ def musiclistboxpointer(event):
                         if playbuttonstate == 0:
                             playbuttonstate = 1
                             PlayButton.configure(image=Pauseimg)
-                        if len(listofsongs[songnumber]) > 50:
-                            PlayLabelText.set(listofsongs[songnumber][0:50] + "...mp3")
+                        if len(listofsongs[songnumber]) > 45:
+                            PlayLabelText.set(listofsongs[songnumber][0:45] + "...mp3")
                         else:
                             PlayLabelText.set(listofsongs[songnumber])
                         preapir()
@@ -275,12 +276,9 @@ def musiclistboxpointer(event):
 
 
 def volume(value):
-    global VolumeValue
     value = float(value)
     value = round(value, 0)
-    value = int(value)
-    VolumeValue.set("{}%".format(value))
-    value = value / 100
+    value = int(value) / 100
     mixer.music.set_volume(value)
 
 
@@ -291,25 +289,22 @@ def preapir():
     file = MP3(listofsongs[songnumber])
     bitratevar = int(file.info.bitrate / 1000)
     samplerate = file.info.sample_rate
-    BitrateLabelText.set("Bitrate: {}kbps".format(bitratevar))
-    SampleLabelText.set("Sample Rate: {}kHz".format(samplerate))
+    BitrateLabelText.set("Bitrate: " + str(bitratevar) + "kbps")
+    SampleLabelText.set("Sample Rate: " + str(samplerate) + "kHz")
     try:
         fileinfo = file.tags['TCON']
-        GenreLabelText.set("Genre:  {}".format(fileinfo))
+        GenreLabelText.set("Genre: " + str(fileinfo))
     except:
         GenreLabelText.set("Genre: Unknown")
     try:
         fileyear = file.tags['TDRC']
-        YearLabelText.set("Year: {}".format(fileyear))
+        YearLabelText.set("Year: " + str(fileyear))
     except:
         YearLabelText.set("Year: Unknown")
     mins, secs = divmod(file.info.length, 60)
     mins = int(mins)
     secs = int(secs)
-    if secs < 10:
-        TimeLabelText.set("Time: {}:0{}".format(mins, secs))
-    else:
-        TimeLabelText.set("Time: {}:{}".format(mins, secs))
+    TimeLabelText.set("Time: " + str(mins) + ":" + str(secs).zfill(2))
     progressvalue = round(file.info.length, 1)
     if playbuttonstate == 0:
         PlayButton.configure(image=Pauseimg)
@@ -326,7 +321,7 @@ def progressbarfill(totallength):
         elapsed += 0.1
         MusicProgressBar["value"] = elapsed
         time.sleep(0.1)
-    if elapsed >= totallength - 15:
+    if elapsed >= totallength:
         MusicProgressBar["value"] = totallength
         PlayButton.configure(image=Playimg)
         playbuttonstate = 0
@@ -339,11 +334,17 @@ def playmode():
     global maxsong
     global state
     if state == 1:
-        time.sleep(2)
+        time.sleep(0.5)
         if mode == 0:
             if songnumber < maxsong - 1:
                 nextsong()
         elif mode == 1:
+            if songnumber < maxsong - 1:
+                nextsong()
+            elif songnumber == maxsong - 1:
+                songnumber = 0
+                playsong()
+        elif mode == 2:
             playsong()
 
 
@@ -351,10 +352,13 @@ def switchmode():
     global mode
     if mode == 0:
         mode = 1
-        ModeButton.configure(image=Repeat)
+        ModeButton.configure(image=RepeatAll)
+    elif mode == 1:
+        mode = 2
+        ModeButton.configure(image=RepeatOne)
     else:
         mode = 0
-        ModeButton.configure(image=Scuffle)
+        ModeButton.configure(image=RepeatNone)
 
 
 def close():
@@ -373,33 +377,31 @@ def close():
 if __name__ == "__main__":
     firststart()
 else:
-    PlayerForm.destroy()
+    exit()
 MusicProgressBar = ttk.Progressbar(PlayerForm, orient=HORIZONTAL, length=200, mode="determinate", style="G.Horizontal"
                                                                                                         ".TProgressbar")
-PlayLabel = ttk.Label(PlayerForm, textvariable=PlayLabelText, font="Calibri", style="W.TLabel")
-GenreLabel = ttk.Label(PlayerForm, textvariable=GenreLabelText, font="Calibri", style="W.TLabel")
-PlayBitrate = ttk.Label(PlayerForm, textvariable=BitrateLabelText, font="Calibri", style="W.TLabel")
-VerLabel = ttk.Label(PlayerForm, text="Ver. 2.6.1", font="Calibri", style="W.TLabel")
+PlayLabel = ttk.Label(PlayerForm, textvariable=PlayLabelText, font='Bahnschrift 11', style="W.TLabel")
+GenreLabel = ttk.Label(PlayerForm, textvariable=GenreLabelText, font='Bahnschrift 11', style="W.TLabel")
+PlayBitrate = ttk.Label(PlayerForm, textvariable=BitrateLabelText, font='Bahnschrift 11', style="W.TLabel")
+VerLabel = ttk.Label(PlayerForm, text="Ver. 2.6.2", font='Bahnschrift 11', style="W.TLabel")
 DirectoryChangeButton = ttk.Button(PlayerForm, image=Fileimg, cursor="hand2", takefocus=0, command=changedirectory)
 RefreshButton = ttk.Button(PlayerForm, image=RefreshLabelimg, cursor="hand2", takefocus=0, command=refreshdirectory)
-DirectoryLabel = ttk.Label(PlayerForm, font="Calibri", textvariable=DirectoryLabelText, style="W.TLabel")
+DirectoryLabel = ttk.Label(PlayerForm, font='Bahnschrift 11', textvariable=DirectoryLabelText, style="W.TLabel")
 PlayButton = ttk.Button(PlayerForm, image=Playimg, cursor="hand2", takefocus=0, command=playsong)
 NextButton = ttk.Button(PlayerForm, image=Forwardimg, cursor="hand2", takefocus=0, command=nextsong)
 PreviousButton = ttk.Button(PlayerForm, image=Previousimg, cursor="hand2", takefocus=0, command=previoussong)
-MusicListBox = Listbox(PlayerForm, font="Calibri", cursor="hand2", bd=0, activestyle="none", selectbackground="#8bc34a",
-                       takefocus=0)
+MusicListBox = Listbox(PlayerForm, font='Bahnschrift 11', cursor="hand2", bd=0, activestyle="none",
+                       selectbackground="#000", takefocus=0)
 PlayImg = ttk.Label(PlayerForm, image=PlayPhotoimg, style="W.TLabel")
 VolumeSlider = ttk.Scale(PlayerForm, from_=0, to=100, orient=HORIZONTAL, command=volume, cursor="hand2")
-VolumeLabel = ttk.Label(PlayerForm, textvariable=VolumeValue, font="Calibri", style="W.TLabel")
-ModeButton = ttk.Button(PlayerForm, image=Scuffle, cursor="hand2", takefocus=0, command=switchmode)
-InfoLabel = ttk.Label(PlayerForm, text="File Info", font="Calibri", style="W.TLabel")
-YearLabel = ttk.Label(PlayerForm, textvariable=YearLabelText, font="Calibri", style="W.TLabel")
-TimeLabel = ttk.Label(PlayerForm, textvariable=TimeLabelText, font="Calibri", style="W.TLabel")
-SampleLabel = ttk.Label(PlayerForm, textvariable=SampleLabelText, font="Calibri", style="W.TLabel")
+ModeButton = ttk.Button(PlayerForm, image=RepeatNone, cursor="hand2", takefocus=0, command=switchmode)
+InfoLabel = ttk.Label(PlayerForm, text="File Info", font='Bahnschrift 11', style="W.TLabel")
+YearLabel = ttk.Label(PlayerForm, textvariable=YearLabelText, font='Bahnschrift 11', style="W.TLabel")
+TimeLabel = ttk.Label(PlayerForm, textvariable=TimeLabelText, font='Bahnschrift 11', style="W.TLabel")
+SampleLabel = ttk.Label(PlayerForm, textvariable=SampleLabelText, font='Bahnschrift 11', style="W.TLabel")
 Separator = ttk.Separator(PlayerForm, orient=HORIZONTAL)
-mixer.music.set_volume(0.50)
-VolumeSlider.set(50)
-VolumeValue.set("50{}".format("%"))
+mixer.music.set_volume(0.35)
+VolumeSlider.set(35)
 GenreLabelText.set("Genre: ")
 PlayLabelText.set("No song is playing!")
 BitrateLabelText.set("Bitrate: ")
@@ -409,8 +411,8 @@ SampleLabelText.set("Sample Rate: ")
 DirectoryLabelText.set(directory)
 update(state)
 MusicProgressBar.place(x=1, y=492, width=800, height=9)
-DirectoryChangeButton.place(x=32, y=2, height=27)
-RefreshButton.place(x=2, y=2)
+DirectoryChangeButton.place(x=32, y=0)
+RefreshButton.place(x=1, y=0)
 DirectoryLabel.place(x=66, y=2, width=651, height=28)
 MusicListBox.place(x=1, y=32, width=550, height=388)
 PlayLabel.place(x=62, y=450)
@@ -420,14 +422,13 @@ GenreLabel.place(x=597, y=85)
 InfoLabel.place(x=652, y=50)
 YearLabel.place(x=597, y=175)
 TimeLabel.place(x=597, y=205)
-PreviousButton.place(x=504, y=444)
-PlayButton.place(x=548, y=441)
-NextButton.place(x=598, y=444)
-PlayImg.place(x=4, y=435)
-VolumeSlider.place(x=650, y=454)
-VolumeLabel.place(x=756, y=449)
+PlayImg.place(x=6, y=438)
+PreviousButton.place(x=530, y=441)
+PlayButton.place(x=574, y=441)
+NextButton.place(x=618, y=441)
+ModeButton.place(x=494, y=444)
+VolumeSlider.place(x=670, y=452)
 VerLabel.place(x=730, y=4)
-ModeButton.place(x=467, y=447)
 Separator.place(x=592, y=80, width=170, height=2)
 MusicListBox.bind("<Button-1>", musiclistboxpointer)
 PlayerForm.protocol("WM_DELETE_WINDOW", close)
