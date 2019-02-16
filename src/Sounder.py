@@ -18,6 +18,7 @@ s.theme_use('clam')
 s.configure("G.Horizontal.TProgressbar", foreground='#8bc34a', background='#8bc34a', lightcolor='#8bc34a',
             darkcolor='#8bc34a', bordercolor='#ffffff', troughcolor='#ffffff')
 s.configure("W.TLabel", background='#ffffff', border='0')
+s.configure("TButton", background='#ffffff', relief="flat")
 tryv = 0
 PlayLabelText = StringVar()
 DirectoryLabelText = StringVar()
@@ -334,15 +335,13 @@ def progressbarfill(totallength):
 
 def playmode():
     global mode
-    global playbuttonstate
     global songnumber
     global maxsong
-    global listofsongs
     global state
     if state == 1:
-        time.sleep(1)
+        time.sleep(2)
         if mode == 0:
-            if songnumber < maxsong:
+            if songnumber < maxsong - 1:
                 nextsong()
         elif mode == 1:
             playsong()
@@ -359,15 +358,22 @@ def switchmode():
 
 
 def close():
-    check = tkinter.messagebox.askquestion('Exit', 'Are you sure you want to quit?')
-    if check == 'yes':
+    if mixer.music.get_busy():
+        check = tkinter.messagebox.askquestion('Exit', 'Are you sure you want to quit?')
+        if check == 'yes':
+            mixer.music.stop()
+            PlayerForm.destroy()
+        else:
+            pass
+    else:
         mixer.music.stop()
         PlayerForm.destroy()
-    else:
-        pass
 
 
-firststart()
+if __name__ == "__main__":
+    firststart()
+else:
+    PlayerForm.destroy()
 MusicProgressBar = ttk.Progressbar(PlayerForm, orient=HORIZONTAL, length=200, mode="determinate", style="G.Horizontal"
                                                                                                         ".TProgressbar")
 PlayLabel = ttk.Label(PlayerForm, textvariable=PlayLabelText, font="Calibri", style="W.TLabel")
@@ -408,12 +414,12 @@ RefreshButton.place(x=2, y=2)
 DirectoryLabel.place(x=66, y=2, width=651, height=28)
 MusicListBox.place(x=1, y=32, width=550, height=388)
 PlayLabel.place(x=62, y=450)
-SampleLabel.place(x=605, y=145)
-PlayBitrate.place(x=605, y=115)
-GenreLabel.place(x=605, y=85)
-InfoLabel.place(x=660, y=50)
-YearLabel.place(x=605, y=175)
-TimeLabel.place(x=605, y=205)
+SampleLabel.place(x=597, y=145)
+PlayBitrate.place(x=597, y=115)
+GenreLabel.place(x=597, y=85)
+InfoLabel.place(x=652, y=50)
+YearLabel.place(x=597, y=175)
+TimeLabel.place(x=597, y=205)
 PreviousButton.place(x=504, y=444)
 PlayButton.place(x=548, y=441)
 NextButton.place(x=598, y=444)
@@ -422,7 +428,7 @@ VolumeSlider.place(x=650, y=454)
 VolumeLabel.place(x=756, y=449)
 VerLabel.place(x=730, y=4)
 ModeButton.place(x=467, y=447)
-Separator.place(x=600, y=80, width=170)
+Separator.place(x=592, y=80, width=170, height=2)
 MusicListBox.bind("<Button-1>", musiclistboxpointer)
 PlayerForm.protocol("WM_DELETE_WINDOW", close)
 PlayerForm.mainloop()
