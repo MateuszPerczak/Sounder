@@ -153,8 +153,8 @@ def playsong():
             playbuttonstate = 0
         elif playbuttonstate == 0:
             mixer.music.load(listofsongs[songnumber])
-            if len(listofsongs[songnumber]) > 45:
-                PlayLabelText.set(listofsongs[songnumber][0:45] + "...mp3")
+            if len(listofsongs[songnumber]) > 60:
+                PlayLabelText.set(listofsongs[songnumber][0:60] + "...mp3")
             else:
                 PlayLabelText.set(listofsongs[songnumber])
             mixer.music.play()
@@ -185,8 +185,8 @@ def nextsong():
                 songnumber += 1
                 mixer.music.load(listofsongs[songnumber])
                 mixer.music.play()
-                if len(listofsongs[songnumber]) > 45:
-                    PlayLabelText.set(listofsongs[songnumber][0:45] + "...mp3")
+                if len(listofsongs[songnumber]) > 60:
+                    PlayLabelText.set(listofsongs[songnumber][0:60] + "...mp3")
                 else:
                     PlayLabelText.set(listofsongs[songnumber])
                 preapir()
@@ -199,8 +199,8 @@ def nextsong():
                 songnumber += 1
                 mixer.music.load(listofsongs[songnumber])
                 mixer.music.play()
-                if len(listofsongs[songnumber]) > 45:
-                    PlayLabelText.set(listofsongs[songnumber][0:45] + "...mp3")
+                if len(listofsongs[songnumber]) > 60:
+                    PlayLabelText.set(listofsongs[songnumber][0:60] + "...mp3")
                 else:
                     PlayLabelText.set(listofsongs[songnumber])
                 preapir()
@@ -219,8 +219,8 @@ def previoussong():
                 songnumber -= 1
                 mixer.music.load(listofsongs[songnumber])
                 mixer.music.play()
-                if len(listofsongs[songnumber]) > 45:
-                    PlayLabelText.set(listofsongs[songnumber][0:45] + "...mp3")
+                if len(listofsongs[songnumber]) > 60:
+                    PlayLabelText.set(listofsongs[songnumber][0:60] + "...mp3")
                 else:
                     PlayLabelText.set(listofsongs[songnumber])
                 preapir()
@@ -233,8 +233,8 @@ def previoussong():
                 songnumber -= 1
                 mixer.music.load(listofsongs[songnumber])
                 mixer.music.play()
-                if len(listofsongs[songnumber]) > 45:
-                    PlayLabelText.set(listofsongs[songnumber][0:45] + "...mp3")
+                if len(listofsongs[songnumber]) > 60:
+                    PlayLabelText.set(listofsongs[songnumber][0:60] + "...mp3")
                 else:
                     PlayLabelText.set(listofsongs[songnumber])
                 preapir()
@@ -267,8 +267,8 @@ def musiclistboxpointer(event):
                         if playbuttonstate == 0:
                             playbuttonstate = 1
                             PlayButton.configure(image=Pauseimg)
-                        if len(listofsongs[songnumber]) > 45:
-                            PlayLabelText.set(listofsongs[songnumber][0:45] + "...mp3")
+                        if len(listofsongs[songnumber]) > 60:
+                            PlayLabelText.set(listofsongs[songnumber][0:60] + "...mp3")
                         else:
                             PlayLabelText.set(listofsongs[songnumber])
                         preapir()
@@ -321,7 +321,7 @@ def progressbarfill(totallength):
         elapsed += 0.1
         MusicProgressBar["value"] = elapsed
         time.sleep(0.1)
-    if elapsed >= totallength:
+    if elapsed >= totallength - 5:
         MusicProgressBar["value"] = totallength
         PlayButton.configure(image=Playimg)
         playbuttonstate = 0
@@ -334,7 +334,7 @@ def playmode():
     global maxsong
     global state
     if state == 1:
-        time.sleep(0.5)
+        time.sleep(1)
         if mode == 0:
             if songnumber < maxsong - 1:
                 nextsong()
@@ -383,7 +383,7 @@ MusicProgressBar = ttk.Progressbar(PlayerForm, orient=HORIZONTAL, length=200, mo
 PlayLabel = ttk.Label(PlayerForm, textvariable=PlayLabelText, font='Bahnschrift 11', style="W.TLabel")
 GenreLabel = ttk.Label(PlayerForm, textvariable=GenreLabelText, font='Bahnschrift 11', style="W.TLabel")
 PlayBitrate = ttk.Label(PlayerForm, textvariable=BitrateLabelText, font='Bahnschrift 11', style="W.TLabel")
-VerLabel = ttk.Label(PlayerForm, text="Ver. 2.6.2", font='Bahnschrift 11', style="W.TLabel")
+VerLabel = ttk.Label(PlayerForm, text="Ver. 2.6.3", font='Bahnschrift 11', style="W.TLabel")
 DirectoryChangeButton = ttk.Button(PlayerForm, image=Fileimg, cursor="hand2", takefocus=0, command=changedirectory)
 RefreshButton = ttk.Button(PlayerForm, image=RefreshLabelimg, cursor="hand2", takefocus=0, command=refreshdirectory)
 DirectoryLabel = ttk.Label(PlayerForm, font='Bahnschrift 11', textvariable=DirectoryLabelText, style="W.TLabel")
