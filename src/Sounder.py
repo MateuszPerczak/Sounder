@@ -19,7 +19,7 @@ s.configure("G.Horizontal.TProgressbar", foreground='#00000', background='#00000
             darkcolor='#ffffff', bordercolor='#ffffff', troughcolor='#ffffff')
 s.configure("W.TLabel", background='#ffffff', border='0')
 s.configure("TButton", background='#ffffff', relief="flat")
-tryv = 0
+s.configure("TScale", troughcolor='#ffffff', background='#ffffff')
 PlayLabelText = StringVar()
 DirectoryLabelText = StringVar()
 GenreLabelText = StringVar()
@@ -53,6 +53,7 @@ def musicscan():
     global songnumber
     state = 0
     songnumber = 0
+    maxsong = -1
     listofsongs = []
     try:
         os.chdir(directory)
@@ -92,14 +93,12 @@ def changedirectory():
     global directory
     global sounderdirectory
     global state
-    global maxsong
     newdirectory = askdirectory()
     if directory != newdirectory and newdirectory != "" or None:
         os.chdir(sounderdirectory)
         with open('.settings', 'w') as data:
             data.write(newdirectory)
-        for file in range(maxsong + 1):
-            MusicListBox.delete(0)
+        MusicListBox.delete(0, END)
         directory = newdirectory
         DirectoryLabelText.set(directory)
         musicscan()
@@ -117,7 +116,7 @@ def update(cstate):
             listofsongs.reverse()
         elif cstate == 0:
             MusicListBox.delete(0, END)
-            maxsong = 0
+            maxsong = -1
             listofsongs = []
     except:
         print("Unexpected char")
@@ -129,7 +128,7 @@ def refreshdirectory():
     global listofsongs
     global state
     state = 0
-    maxsong = 0
+    maxsong = -1
     listofsongs = []
     MusicListBox.delete(0, END)
     for file in os.listdir(directory):
@@ -177,7 +176,7 @@ def nextsong():
     global maxsong
     if state == 1:
         if playbuttonstate == 1:
-            if songnumber < maxsong - 1:
+            if songnumber < maxsong:
                 mixer.music.stop()
                 time.sleep(0.1)
                 PlayButton.configure(image=Pauseimg)
@@ -191,7 +190,7 @@ def nextsong():
                     PlayLabelText.set(listofsongs[songnumber])
                 preapir()
         if playbuttonstate == 0:
-            if songnumber < maxsong - 1:
+            if songnumber < maxsong:
                 mixer.music.stop()
                 time.sleep(0.1)
                 playbuttonstate = 1
@@ -242,37 +241,33 @@ def previoussong():
 
 def musiclistboxpointer(event):
     print(event)
-    global tryv
     global selected
     global curent
     global state
     global songnumber
     global playbuttonstate
     global listofsongs
-    tryv += 1
-    if tryv == 2:
+    if state == 1:
         mixer.music.stop()
-        if state == 1:
-            selected = MusicListBox.curselection()
-            if selected != ():
-                mixer.music.stop()
-                time.sleep(0.1)
-                for Song in selected:
-                    curent = MusicListBox.get(Song)
-                for nr, Song in enumerate(listofsongs):
-                    if Song == curent:
-                        mixer.music.load(listofsongs[nr])
-                        songnumber = nr
-                        mixer.music.play()
-                        if playbuttonstate == 0:
-                            playbuttonstate = 1
-                            PlayButton.configure(image=Pauseimg)
-                        if len(listofsongs[songnumber]) > 60:
-                            PlayLabelText.set(listofsongs[songnumber][0:60] + "...mp3")
-                        else:
-                            PlayLabelText.set(listofsongs[songnumber])
-                        preapir()
-                        tryv = 0
+        selected = MusicListBox.curselection()
+        if selected != ():
+            mixer.music.stop()
+            time.sleep(0.1)
+            for Song in selected:
+                curent = MusicListBox.get(Song)
+            for nr, Song in enumerate(listofsongs):
+                if Song == curent:
+                    mixer.music.load(listofsongs[nr])
+                    songnumber = nr
+                    mixer.music.play()
+                    if playbuttonstate == 0:
+                        playbuttonstate = 1
+                        PlayButton.configure(image=Pauseimg)
+                    if len(listofsongs[songnumber]) > 60:
+                        PlayLabelText.set(listofsongs[songnumber][0:60] + "...mp3")
+                    else:
+                        PlayLabelText.set(listofsongs[songnumber])
+                    preapir()
 
 
 def volume(value):
@@ -336,12 +331,12 @@ def playmode():
     if state == 1:
         time.sleep(1)
         if mode == 0:
-            if songnumber < maxsong - 1:
+            if songnumber < maxsong:
                 nextsong()
         elif mode == 1:
-            if songnumber < maxsong - 1:
+            if songnumber < maxsong:
                 nextsong()
-            elif songnumber == maxsong - 1:
+            elif songnumber == maxsong:
                 songnumber = 0
                 playsong()
         elif mode == 2:
@@ -383,7 +378,7 @@ MusicProgressBar = ttk.Progressbar(PlayerForm, orient=HORIZONTAL, length=200, mo
 PlayLabel = ttk.Label(PlayerForm, textvariable=PlayLabelText, font='Bahnschrift 11', style="W.TLabel")
 GenreLabel = ttk.Label(PlayerForm, textvariable=GenreLabelText, font='Bahnschrift 11', style="W.TLabel")
 PlayBitrate = ttk.Label(PlayerForm, textvariable=BitrateLabelText, font='Bahnschrift 11', style="W.TLabel")
-VerLabel = ttk.Label(PlayerForm, text="Ver. 2.6.3", font='Bahnschrift 11', style="W.TLabel")
+VerLabel = ttk.Label(PlayerForm, text="Ver. 2.6.4", font='Bahnschrift 11', style="W.TLabel")
 DirectoryChangeButton = ttk.Button(PlayerForm, image=Fileimg, cursor="hand2", takefocus=0, command=changedirectory)
 RefreshButton = ttk.Button(PlayerForm, image=RefreshLabelimg, cursor="hand2", takefocus=0, command=refreshdirectory)
 DirectoryLabel = ttk.Label(PlayerForm, font='Bahnschrift 11', textvariable=DirectoryLabelText, style="W.TLabel")
