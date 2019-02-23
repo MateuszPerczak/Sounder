@@ -48,7 +48,6 @@ def musicscan():
     global directory
     global maxsong
     global listofsongs
-    global playbuttonstate
     global state
     global songnumber
     state = 0
@@ -137,6 +136,7 @@ def refreshdirectory():
             state = 1
             listofsongs.append(file)
     update(state)
+    time.sleep(0.07)
 
 
 def playsong():
@@ -300,10 +300,10 @@ def preapir():
     mins = int(mins)
     secs = int(secs)
     TimeLabelText.set("Time: " + str(mins) + ":" + str(secs).zfill(2))
-    progressvalue = round(file.info.length, 1)
+    totallength = round(file.info.length, 1)
     if playbuttonstate == 0:
         PlayButton.configure(image=Pauseimg)
-    pbf = threading.Thread(target=progressbarfill, args=(progressvalue,))
+    pbf = threading.Thread(target=progressbarfill, args=(totallength,))
     pbf.daemon = True
     pbf.start()
 
@@ -311,12 +311,12 @@ def preapir():
 def progressbarfill(totallength):
     global playbuttonstate
     MusicProgressBar["maximum"] = totallength
-    elapsed = 1.0
-    while elapsed <= totallength and mixer.music.get_busy():
+    elapsed = 1.4
+    while round(elapsed, 1) <= totallength and mixer.music.get_busy():
         elapsed += 0.1
         MusicProgressBar["value"] = elapsed
         time.sleep(0.1)
-    if elapsed >= totallength - 5:
+    if round(elapsed, 1) >= totallength - 4:
         MusicProgressBar["value"] = totallength
         PlayButton.configure(image=Playimg)
         playbuttonstate = 0
@@ -329,7 +329,7 @@ def playmode():
     global maxsong
     global state
     if state == 1:
-        time.sleep(1)
+        time.sleep(0.5)
         if mode == 0:
             if songnumber < maxsong:
                 nextsong()
@@ -358,7 +358,7 @@ def switchmode():
 
 def close():
     if mixer.music.get_busy():
-        check = tkinter.messagebox.askquestion('Exit', 'Are you sure you want to quit?')
+        check = tkinter.messagebox.askquestion('Sounder!', 'Are you sure you want to quit?')
         if check == 'yes':
             mixer.music.stop()
             PlayerForm.destroy()
@@ -369,16 +369,13 @@ def close():
         PlayerForm.destroy()
 
 
-if __name__ == "__main__":
-    firststart()
-else:
-    exit()
+firststart()
 MusicProgressBar = ttk.Progressbar(PlayerForm, orient=HORIZONTAL, length=200, mode="determinate", style="G.Horizontal"
                                                                                                         ".TProgressbar")
 PlayLabel = ttk.Label(PlayerForm, textvariable=PlayLabelText, font='Bahnschrift 11', style="W.TLabel")
 GenreLabel = ttk.Label(PlayerForm, textvariable=GenreLabelText, font='Bahnschrift 11', style="W.TLabel")
 PlayBitrate = ttk.Label(PlayerForm, textvariable=BitrateLabelText, font='Bahnschrift 11', style="W.TLabel")
-VerLabel = ttk.Label(PlayerForm, text="Ver. 2.6.4", font='Bahnschrift 11', style="W.TLabel")
+VerLabel = ttk.Label(PlayerForm, text="Ver. 2.6.5", font='Bahnschrift 11', style="W.TLabel")
 DirectoryChangeButton = ttk.Button(PlayerForm, image=Fileimg, cursor="hand2", takefocus=0, command=changedirectory)
 RefreshButton = ttk.Button(PlayerForm, image=RefreshLabelimg, cursor="hand2", takefocus=0, command=refreshdirectory)
 DirectoryLabel = ttk.Label(PlayerForm, font='Bahnschrift 11', textvariable=DirectoryLabelText, style="W.TLabel")
@@ -418,11 +415,11 @@ InfoLabel.place(x=652, y=50)
 YearLabel.place(x=597, y=175)
 TimeLabel.place(x=597, y=205)
 PlayImg.place(x=6, y=438)
-PreviousButton.place(x=530, y=441)
-PlayButton.place(x=574, y=441)
-NextButton.place(x=618, y=441)
-ModeButton.place(x=494, y=444)
-VolumeSlider.place(x=670, y=452)
+PreviousButton.place(x=530, y=442)
+PlayButton.place(x=574, y=442)
+NextButton.place(x=618, y=442)
+ModeButton.place(x=494, y=446)
+VolumeSlider.place(x=670, y=454)
 VerLabel.place(x=730, y=4)
 Separator.place(x=592, y=80, width=170, height=2)
 MusicListBox.bind("<Button-1>", musiclistboxpointer)
