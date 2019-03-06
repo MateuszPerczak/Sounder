@@ -288,7 +288,10 @@ def preapir():
     SampleLabelText.set("Sample Rate: " + str(samplerate) + "kHz")
     try:
         fileinfo = file.tags['TCON']
-        GenreLabelText.set("Genre: " + str(fileinfo))
+        if len(str(fileinfo)) > 13:
+            GenreLabelText.set("Genre: " + str(fileinfo)[0:15])
+        else:
+            GenreLabelText.set("Genre: " + str(fileinfo))
     except:
         GenreLabelText.set("Genre: Unknown")
     try:
@@ -375,7 +378,7 @@ MusicProgressBar = ttk.Progressbar(PlayerForm, orient=HORIZONTAL, length=200, mo
 PlayLabel = ttk.Label(PlayerForm, textvariable=PlayLabelText, font='Bahnschrift 11', style="W.TLabel")
 GenreLabel = ttk.Label(PlayerForm, textvariable=GenreLabelText, font='Bahnschrift 11', style="W.TLabel")
 PlayBitrate = ttk.Label(PlayerForm, textvariable=BitrateLabelText, font='Bahnschrift 11', style="W.TLabel")
-VerLabel = ttk.Label(PlayerForm, text="Ver. 2.6.5", font='Bahnschrift 11', style="W.TLabel")
+VerLabel = ttk.Label(PlayerForm, text="Ver. 2.6.6", font='Bahnschrift 11', style="W.TLabel")
 DirectoryChangeButton = ttk.Button(PlayerForm, image=Fileimg, cursor="hand2", takefocus=0, command=changedirectory)
 RefreshButton = ttk.Button(PlayerForm, image=RefreshLabelimg, cursor="hand2", takefocus=0, command=refreshdirectory)
 DirectoryLabel = ttk.Label(PlayerForm, font='Bahnschrift 11', textvariable=DirectoryLabelText, style="W.TLabel")
@@ -418,10 +421,10 @@ PlayImg.place(x=6, y=438)
 PreviousButton.place(x=530, y=442)
 PlayButton.place(x=574, y=442)
 NextButton.place(x=618, y=442)
-ModeButton.place(x=494, y=446)
+ModeButton.place(x=494, y=445)
 VolumeSlider.place(x=670, y=454)
 VerLabel.place(x=730, y=4)
 Separator.place(x=592, y=80, width=170, height=2)
-MusicListBox.bind("<Button-1>", musiclistboxpointer)
+MusicListBox.bind("<<ListboxSelect>>", musiclistboxpointer)
 PlayerForm.protocol("WM_DELETE_WINDOW", close)
 PlayerForm.mainloop()
