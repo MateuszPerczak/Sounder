@@ -60,11 +60,7 @@ def musicscan():
         tkinter.messagebox.showwarning('Settings', 'Your settings file was corrupted!')
         os.chdir(sounderdirectory)
         os.remove('.settings')
-        directory = askdirectory()
-        if directory == "" or None:
-            exit("Directory is empty!!")
-        with open('.settings', 'a')as data:
-            data.write(directory)
+        firststart()
         os.chdir(directory)
     for file in os.listdir(directory):
         if file.endswith(".mp3"):
@@ -78,14 +74,25 @@ def firststart():
     if os.path.exists('.settings'):
         with open('.settings', 'r') as data:
             directory = data.readline()
+        if directory == "" or None:
+            directory = askdirectory()
+            if directory == "" or None:
+                firststart()
+            elif directory != "" or None:
+                mixer.init()
+                musicscan()
+        elif directory != "" or None:
+            mixer.init()
+            musicscan()
     elif not os.path.exists('.settings'):
         directory = askdirectory()
-        with open('.settings', 'a')as data:
-            data.write(directory)
-    if directory == "" or None:
-        exit("Directory is empty!!")
-    mixer.init()
-    musicscan()
+        if directory == "" or None:
+            firststart()
+        elif directory != "" or None:
+            with open('.settings', 'a') as file:
+                file.write(directory)
+            mixer.init()
+            musicscan()
 
 
 def changedirectory():
@@ -380,7 +387,7 @@ MusicProgressBar = ttk.Progressbar(PlayerForm, orient=HORIZONTAL, length=200, mo
 PlayLabel = ttk.Label(PlayerForm, textvariable=PlayLabelText, font='Bahnschrift 11', style="W.TLabel")
 GenreLabel = ttk.Label(PlayerForm, textvariable=GenreLabelText, font='Bahnschrift 11', style="W.TLabel")
 PlayBitrate = ttk.Label(PlayerForm, textvariable=BitrateLabelText, font='Bahnschrift 11', style="W.TLabel")
-VerLabel = ttk.Label(PlayerForm, text="Ver. 2.6.7", font='Bahnschrift 11', style="W.TLabel")
+VerLabel = ttk.Label(PlayerForm, text="Ver. 2.6.8", font='Bahnschrift 11', style="W.TLabel")
 DirectoryChangeButton = ttk.Button(PlayerForm, image=Fileimg, cursor="hand2", takefocus=0, command=changedirectory)
 RefreshButton = ttk.Button(PlayerForm, image=RefreshLabelimg, cursor="hand2", takefocus=0, command=refreshdirectory)
 DirectoryLabel = ttk.Label(PlayerForm, font='Bahnschrift 11', textvariable=DirectoryLabelText, style="W.TLabel")
