@@ -42,6 +42,7 @@ RepeatNone = PhotoImage(file="repeatnone.png")
 RepeatAll = PhotoImage(file="repeatall.png")
 RepeatOne = PhotoImage(file="repeatone.png")
 sounderdirectory = os.getcwd()
+userhomefolder = os.path.expanduser('~')
 
 
 def musicscan():
@@ -64,20 +65,27 @@ def musicscan():
     except:
         tkinter.messagebox.showwarning('Settings', 'Your settings file was corrupted!')
         os.chdir(sounderdirectory)
-        os.remove('.settings')
+        os.remove('settings.ini')
         firststart()
 
 
 def firststart():
     global directory
-    if os.path.exists('.settings'):
-        with open('.settings', 'r') as data:
+    if os.path.exists('settings.ini'):
+        with open('settings.ini', 'r') as data:
             directory = data.readline()
         if directory == "" or None:
             directory = askdirectory()
             if directory == "" or None:
-                firststart()
+                directory = userhomefolder + '\\Music'
+                with open('settings.ini', 'a') as file:
+                    file.write(directory)
+                mixer.pre_init(frequency=44100, size=-16, channels=2)
+                mixer.init()
+                musicscan()
             elif directory != "" or None:
+                with open('settings.ini', 'a') as file:
+                    file.write(directory)
                 mixer.pre_init(frequency=44100, size=-16, channels=2)
                 mixer.init()
                 musicscan()
@@ -85,12 +93,17 @@ def firststart():
             mixer.pre_init(frequency=44100, size=-16, channels=2)
             mixer.init()
             musicscan()
-    elif not os.path.exists('.settings'):
+    elif not os.path.exists('settings.ini'):
         directory = askdirectory()
         if directory == "" or None:
-            firststart()
+            directory = userhomefolder + '\\Music'
+            with open('settings.ini', 'a') as file:
+                file.write(directory)
+            mixer.pre_init(frequency=44100, size=-16, channels=2)
+            mixer.init()
+            musicscan()
         elif directory != "" or None:
-            with open('.settings', 'a') as file:
+            with open('settings.ini', 'a') as file:
                 file.write(directory)
             mixer.pre_init(frequency=44100, size=-16, channels=2)
             mixer.init()
@@ -104,7 +117,7 @@ def changedirectory():
     newdirectory = askdirectory()
     if directory != newdirectory and newdirectory != "" or None:
         os.chdir(sounderdirectory)
-        with open('.settings', 'w') as data:
+        with open('settings.ini', 'w') as data:
             data.write(newdirectory)
         MusicListBox.delete(0, END)
         directory = newdirectory
@@ -389,7 +402,7 @@ MusicProgressBar = ttk.Progressbar(PlayerForm, orient=HORIZONTAL, length=200, mo
 PlayLabel = ttk.Label(PlayerForm, textvariable=PlayLabelText, font='Bahnschrift 11', style="W.TLabel")
 GenreLabel = ttk.Label(PlayerForm, textvariable=GenreLabelText, font='Bahnschrift 11', style="W.TLabel")
 PlayBitrate = ttk.Label(PlayerForm, textvariable=BitrateLabelText, font='Bahnschrift 11', style="W.TLabel")
-VerLabel = ttk.Label(PlayerForm, text="Ver. 2.6.9", font='Bahnschrift 11', style="W.TLabel")
+VerLabel = ttk.Label(PlayerForm, text="Ver. 2.7.0", font='Bahnschrift 11', style="W.TLabel")
 DirectoryChangeButton = ttk.Button(PlayerForm, image=Fileimg, cursor="hand2", takefocus=0, command=changedirectory)
 RefreshButton = ttk.Button(PlayerForm, image=RefreshLabelimg, cursor="hand2", takefocus=0, command=refreshdirectory)
 DirectoryLabel = ttk.Label(PlayerForm, font='Bahnschrift 11', textvariable=DirectoryLabelText, style="W.TLabel")
