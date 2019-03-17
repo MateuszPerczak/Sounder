@@ -7,6 +7,7 @@ from tkinter import *
 from tkinter import ttk
 from tkinter.filedialog import askdirectory
 import tkinter.messagebox
+
 PlayerForm = Tk()
 PlayerForm.geometry('800x500')
 PlayerForm.title("Sounder!")
@@ -44,8 +45,8 @@ RepeatAll = PhotoImage(file="repeatall.png")
 RepeatOne = PhotoImage(file="repeatone.png")
 Info = PhotoImage(file="info.png")
 InfoMusic = PhotoImage(file="musicinfo.png")
-sounderdirectory = os.getcwd()
-userhomefolder = os.path.expanduser('~')
+sounderdir = os.getcwd()
+userdir = os.path.expanduser('~')
 
 
 def musicscan():
@@ -68,7 +69,7 @@ def musicscan():
         Songs.set("Songs: " + str(maxsong + 1))
     except:
         tkinter.messagebox.showwarning('Settings', 'Your settings file was corrupted!')
-        os.chdir(sounderdirectory)
+        os.chdir(sounderdir)
         os.remove('settings.ini')
         firststart()
 
@@ -81,7 +82,7 @@ def firststart():
         if directory == "" or None:
             directory = askdirectory()
             if directory == "" or None:
-                directory = userhomefolder + '\\Music'
+                directory = userdir + '\\Music'
                 with open('settings.ini', 'a') as file:
                     file.write(directory)
                 mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=4096)
@@ -100,7 +101,7 @@ def firststart():
     elif not os.path.exists('settings.ini'):
         directory = askdirectory()
         if directory == "" or None:
-            directory = userhomefolder + '\\Music'
+            directory = userdir + '\\Music'
             with open('settings.ini', 'a') as file:
                 file.write(directory)
             mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=4096)
@@ -116,11 +117,11 @@ def firststart():
 
 def changedirectory():
     global directory
-    global sounderdirectory
+    global sounderdir
     global state
     newdirectory = askdirectory()
     if directory != newdirectory and newdirectory != "" or None:
-        os.chdir(sounderdirectory)
+        os.chdir(sounderdir)
         with open('settings.ini', 'w') as data:
             data.write(newdirectory)
         MusicListBox.delete(0, END)
@@ -404,7 +405,7 @@ def info():
     InfoFrame.geometry("300x150")
     InfoFrame.resizable(width=False, height=False)
     InfoFrame.title("Sounder Info")
-    InfoFrame.iconbitmap(sounderdirectory + "\\Soundericon.ico")
+    InfoFrame.iconbitmap(sounderdir + "\\Soundericon.ico")
     InfoFrame.configure(background='#ffffff')
     VerLabel = ttk.Label(InfoFrame, text="Sounder version: 2.7.1", font='Bahnschrift 11', style="W.TLabel")
     AuthorLabel = ttk.Label(InfoFrame, text="Author: Mateusz Perczak", font='Bahnschrift 11', style="W.TLabel")
