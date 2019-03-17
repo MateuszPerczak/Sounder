@@ -28,6 +28,7 @@ VolumeValue = StringVar()
 YearLabelText = StringVar()
 TimeLabelText = StringVar()
 SampleLabelText = StringVar()
+Songs = StringVar()
 maxsong = 0
 playbuttonstate = 0
 mode = 0
@@ -41,6 +42,8 @@ RefreshLabelimg = PhotoImage(file="refresh.png")
 RepeatNone = PhotoImage(file="repeatnone.png")
 RepeatAll = PhotoImage(file="repeatall.png")
 RepeatOne = PhotoImage(file="repeatone.png")
+Info = PhotoImage(file="info.png")
+InfoMusic = PhotoImage(file="musicinfo.png")
 sounderdirectory = os.getcwd()
 userhomefolder = os.path.expanduser('~')
 
@@ -62,6 +65,7 @@ def musicscan():
                 maxsong += 1
                 state = 1
                 listofsongs.append(file)
+        Songs.set("Songs: " + str(maxsong + 1))
     except:
         tkinter.messagebox.showwarning('Settings', 'Your settings file was corrupted!')
         os.chdir(sounderdirectory)
@@ -80,17 +84,17 @@ def firststart():
                 directory = userhomefolder + '\\Music'
                 with open('settings.ini', 'a') as file:
                     file.write(directory)
-                mixer.pre_init(frequency=44100, size=-16, channels=2)
+                mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=4096)
                 mixer.init()
                 musicscan()
             elif directory != "" or None:
                 with open('settings.ini', 'a') as file:
                     file.write(directory)
-                mixer.pre_init(frequency=44100, size=-16, channels=2)
+                mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=4096)
                 mixer.init()
                 musicscan()
         elif directory != "" or None:
-            mixer.pre_init(frequency=44100, size=-16, channels=2)
+            mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=4096)
             mixer.init()
             musicscan()
     elif not os.path.exists('settings.ini'):
@@ -99,13 +103,13 @@ def firststart():
             directory = userhomefolder + '\\Music'
             with open('settings.ini', 'a') as file:
                 file.write(directory)
-            mixer.pre_init(frequency=44100, size=-16, channels=2)
+            mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=4096)
             mixer.init()
             musicscan()
         elif directory != "" or None:
             with open('settings.ini', 'a') as file:
                 file.write(directory)
-            mixer.pre_init(frequency=44100, size=-16, channels=2)
+            mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=4096)
             mixer.init()
             musicscan()
 
@@ -294,8 +298,7 @@ def musiclistboxpointer(event):
 
 def volume(value):
     value = float(value)
-    value = round(value, 0)
-    value = int(value) / 100
+    value = value / 100
     mixer.music.set_volume(value)
 
 
@@ -338,12 +341,12 @@ def preapir():
 def progressbarfill(totallength):
     global playbuttonstate
     MusicProgressBar["maximum"] = totallength
-    elapsed = 1.4
+    elapsed = 1.0
     while round(elapsed, 1) <= totallength and mixer.music.get_busy():
         elapsed += 0.1
         MusicProgressBar["value"] = elapsed
-        time.sleep(0.1)
-    if round(elapsed, 1) >= totallength - 4:
+        time.sleep(0.10)
+    if round(elapsed, 1) >= totallength - 3:
         MusicProgressBar["value"] = totallength
         PlayButton.configure(image=Playimg)
         playbuttonstate = 0
@@ -396,13 +399,39 @@ def close():
         PlayerForm.destroy()
 
 
+def info():
+    InfoFrame = Toplevel()
+    InfoFrame.geometry("300x150")
+    InfoFrame.resizable(width=False, height=False)
+    InfoFrame.title("Sounder Info")
+    InfoFrame.iconbitmap(sounderdirectory + "\\Soundericon.ico")
+    InfoFrame.configure(background='#ffffff')
+    VerLabel = ttk.Label(InfoFrame, text="Sounder version: 2.7.1", font='Bahnschrift 11', style="W.TLabel")
+    AuthorLabel = ttk.Label(InfoFrame, text="Author: Mateusz Perczak", font='Bahnschrift 11', style="W.TLabel")
+    SongsLabel = ttk.Label(InfoFrame, textvariable=Songs, font='Bahnschrift 11', style="W.TLabel")
+    MusicLabel = ttk.Label(InfoFrame, image=InfoMusic, style="W.TLabel")
+    UpdateButton = ttk.Button(InfoFrame, image=RefreshLabelimg, cursor="hand2", takefocus=0, command=updatesounder)
+    UpdateLabel = ttk.Label(InfoFrame, text="Update (Not ready yet)", font='Bahnschrift 11', style="W.TLabel")
+    VerLabel.place(x=2, y=2)
+    AuthorLabel.place(x=2, y=24)
+    SongsLabel.place(x=2, y=46)
+    MusicLabel.place(x=210, y=40)
+    UpdateButton.place(x=0, y=120)
+    UpdateLabel.place(x=32, y=124)
+
+
+def updatesounder():
+    # v = "2.7.1"
+    pass
+
+
 firststart()
 MusicProgressBar = ttk.Progressbar(PlayerForm, orient=HORIZONTAL, length=200, mode="determinate", style="G.Horizontal"
                                                                                                         ".TProgressbar")
 PlayLabel = ttk.Label(PlayerForm, textvariable=PlayLabelText, font='Bahnschrift 11', style="W.TLabel")
 GenreLabel = ttk.Label(PlayerForm, textvariable=GenreLabelText, font='Bahnschrift 11', style="W.TLabel")
 PlayBitrate = ttk.Label(PlayerForm, textvariable=BitrateLabelText, font='Bahnschrift 11', style="W.TLabel")
-VerLabel = ttk.Label(PlayerForm, text="Ver. 2.7.0", font='Bahnschrift 11', style="W.TLabel")
+VerButton = ttk.Button(PlayerForm, image=Info, cursor="hand2", takefocus=0, command=info)
 DirectoryChangeButton = ttk.Button(PlayerForm, image=Fileimg, cursor="hand2", takefocus=0, command=changedirectory)
 RefreshButton = ttk.Button(PlayerForm, image=RefreshLabelimg, cursor="hand2", takefocus=0, command=refreshdirectory)
 DirectoryLabel = ttk.Label(PlayerForm, font='Bahnschrift 11', textvariable=DirectoryLabelText, style="W.TLabel")
@@ -412,17 +441,17 @@ PreviousButton = ttk.Button(PlayerForm, image=Previousimg, cursor="hand2", takef
 MusicListBox = Listbox(PlayerForm, font='Bahnschrift 11', cursor="hand2", bd=0, activestyle="none",
                        selectbackground="#000", takefocus=0)
 PlayImg = ttk.Label(PlayerForm, image=PlayPhotoimg, style="W.TLabel")
-VolumeSlider = ttk.Scale(PlayerForm, from_=0, to=100, orient=HORIZONTAL, command=volume, cursor="hand2")
+VolumeSlider = ttk.Scale(PlayerForm, from_=0, to=99, orient=HORIZONTAL, command=volume, cursor="hand2")
 ModeButton = ttk.Button(PlayerForm, image=RepeatNone, cursor="hand2", takefocus=0, command=switchmode)
 InfoLabel = ttk.Label(PlayerForm, text="File Info", font='Bahnschrift 11', style="W.TLabel")
 YearLabel = ttk.Label(PlayerForm, textvariable=YearLabelText, font='Bahnschrift 11', style="W.TLabel")
 TimeLabel = ttk.Label(PlayerForm, textvariable=TimeLabelText, font='Bahnschrift 11', style="W.TLabel")
 SampleLabel = ttk.Label(PlayerForm, textvariable=SampleLabelText, font='Bahnschrift 11', style="W.TLabel")
 Separator = ttk.Separator(PlayerForm, orient=HORIZONTAL)
-mixer.music.set_volume(0.35)
-VolumeSlider.set(35)
+mixer.music.set_volume(0.50)
+VolumeSlider.set(50)
 GenreLabelText.set("Genre: ")
-PlayLabelText.set("No song is playing!")
+PlayLabelText.set("Let's make some noise!")
 BitrateLabelText.set("Bitrate: ")
 YearLabelText.set("Year: ")
 TimeLabelText.set("Time: ")
@@ -447,7 +476,7 @@ PlayButton.place(x=574, y=442)
 NextButton.place(x=618, y=442)
 ModeButton.place(x=494, y=445)
 VolumeSlider.place(x=670, y=454)
-VerLabel.place(x=730, y=4)
+VerButton.place(x=763, y=0)
 Separator.place(x=592, y=80, width=170, height=2)
 MusicListBox.bind("<<ListboxSelect>>", musiclistboxpointer)
 PlayerForm.protocol("WM_DELETE_WINDOW", close)
