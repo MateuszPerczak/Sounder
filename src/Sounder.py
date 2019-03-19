@@ -7,6 +7,7 @@ from tkinter import *
 from tkinter import ttk
 from tkinter.filedialog import askdirectory
 import tkinter.messagebox
+
 PlayerForm = Tk()
 # dir
 sounderdir = os.getcwd()
@@ -16,14 +17,14 @@ PlayerForm.geometry('800x500')
 PlayerForm.title("Sounder!")
 PlayerForm.resizable(width=FALSE, height=FALSE)
 PlayerForm.iconbitmap(sounderdir + "\\Soundericon.ico")
-PlayerForm.configure(background='#ffffff')
+PlayerForm.configure(background='#fff')
 s = ttk.Style()
 s.theme_use('clam')
-s.configure("G.Horizontal.TProgressbar", foreground='#00000', background='#000000', lightcolor='#000000',
-            darkcolor='#ffffff', bordercolor='#ffffff', troughcolor='#ffffff')
-s.configure("W.TLabel", background='#ffffff', border='0')
-s.configure("TButton", background='#ffffff', relief="flat")
-s.configure("TScale", troughcolor='#ffffff', background='#ffffff')
+s.configure("G.Horizontal.TProgressbar", foreground='#00', background='#000', lightcolor='#000',
+            darkcolor='#fff', bordercolor='#fff', troughcolor='#fff')
+s.configure("W.TLabel", background='#fff', border='0')
+s.configure("TButton", background='#fff', relief="flat")
+s.configure("TScale", troughcolor='#fff', background='#fff', relief="flat")
 PlayLabelText = StringVar()
 DirectoryLabelText = StringVar()
 GenreLabelText = StringVar()
@@ -32,7 +33,10 @@ VolumeValue = StringVar()
 YearLabelText = StringVar()
 TimeLabelText = StringVar()
 SampleLabelText = StringVar()
+NowYear = StringVar()
 Avtime = StringVar()
+TSongs = StringVar()
+TVol = StringVar()
 maxsong = 0
 playbuttonstate = 0
 mode = 0
@@ -49,6 +53,10 @@ RepeatOne = PhotoImage(file=sounderdir + "\\repeatone.png")
 Info = PhotoImage(file=sounderdir + "\\info.png")
 InfoMusic = PhotoImage(file=sounderdir + "\\musicinfo.png")
 Copyright = PhotoImage(file=sounderdir + "\\copyright.png")
+Fork = PhotoImage(file=sounderdir + "\\fork.png")
+# year
+NowYear.set("Copyright 2018-{}".format(time.strftime("%Y")))
+# end
 
 
 def musicscan():
@@ -138,6 +146,10 @@ def update(cstate):
     global songnumber
     try:
         if cstate == 1:
+            if maxsong == 0:
+                TSongs.set("Song: {}".format(maxsong))
+            elif maxsong > 0:
+                TSongs.set("Songs: {}".format(maxsong))
             listofsongs.reverse()
             for file in listofsongs:
                 MusicListBox.insert(0, file)
@@ -149,6 +161,7 @@ def update(cstate):
             MusicListBox.delete(0, END)
             maxsong = -1
             listofsongs = []
+            TSongs.set("Songs: 0")
     except:
         print("Unexpected char")
 
@@ -305,6 +318,7 @@ def musiclistboxpointer(event):
 def volume(value):
     value = float(value)
     value = value / 100
+    TVol.set("Volume: {}%".format(int(value * 100)))
     mixer.music.set_volume(value)
 
 
@@ -413,18 +427,24 @@ def info():
     infoframe.iconbitmap(sounderdir + "\\Soundericon.ico")
     infoframe.configure(background='#fff')
     infoframe.grab_set()
-    verlabel = ttk.Label(infoframe, text="Sounder 2.7.2", font='Bahnschrift 11', style="W.TLabel")
+    verlabel = ttk.Label(infoframe, text="Sounder 2.7.3", font='Bahnschrift 11', style="W.TLabel")
     authorlabel = ttk.Label(infoframe, text="By: Mateusz Perczak", font='Bahnschrift 11', style="W.TLabel")
     musiclabel = ttk.Label(infoframe, image=InfoMusic, style="W.TLabel")
     copylabel = ttk.Label(infoframe, image=Copyright, style="W.TLabel")
-    infolabel = ttk.Label(infoframe, text="Copyright 2018-2019", font='Bahnschrift 11', style="W.TLabel")
+    infolabel = ttk.Label(infoframe, textvariable=NowYear, font='Bahnschrift 11', style="W.TLabel")
     atlabel = ttk.Label(infoframe, textvariable=Avtime, font='Bahnschrift 11', style="W.TLabel")
+    forknutton = ttk.Button(infoframe, image=Fork, cursor="hand2", takefocus=0, command=lambda: os.system("start \"\" "
+                                                                                                          "https"
+                                                                                                          "://github"
+                                                                                                          ".com/losek1"
+                                                                                                          "/Sounder"))
     verlabel.place(x=110, y=74)
     authorlabel.place(x=86, y=100)
     musiclabel.place(x=125, y=15)
     copylabel.place(x=2, y=170)
     infolabel.place(x=32, y=172)
     atlabel.place(x=42, y=120)
+    forknutton.place(x=268, y=166)
 
 
 def soundertime():
@@ -460,7 +480,12 @@ InfoLabel = ttk.Label(PlayerForm, text="File Info", font='Bahnschrift 11', style
 YearLabel = ttk.Label(PlayerForm, textvariable=YearLabelText, font='Bahnschrift 11', style="W.TLabel")
 TimeLabel = ttk.Label(PlayerForm, textvariable=TimeLabelText, font='Bahnschrift 11', style="W.TLabel")
 SampleLabel = ttk.Label(PlayerForm, textvariable=SampleLabelText, font='Bahnschrift 11', style="W.TLabel")
-Separator = ttk.Separator(PlayerForm, orient=HORIZONTAL)
+InfoSeparator = ttk.Separator(PlayerForm, orient=HORIZONTAL)
+SouInfo = ttk.Label(PlayerForm, text="Info", font='Bahnschrift 11', style="W.TLabel")
+SouSeperator = ttk.Separator(PlayerForm, orient=HORIZONTAL)
+TotalSongs = ttk.Label(PlayerForm, textvariable=TSongs, font='Bahnschrift 11', style="W.TLabel")
+VolumeInfo = ttk.Label(PlayerForm, textvariable=TVol, font='Bahnschrift 11', style="W.TLabel")
+
 # init ui
 firststart()
 mixer.music.set_volume(0.50)
@@ -497,7 +522,11 @@ NextButton.place(x=618, y=442)
 ModeButton.place(x=494, y=445)
 VolumeSlider.place(x=670, y=454)
 VerButton.place(x=763, y=0)
-Separator.place(x=592, y=80, width=170, height=2)
+InfoSeparator.place(x=592, y=80, width=170, height=2)
+SouInfo.place(x=666, y=250)
+SouSeperator.place(x=592, y=280, width=170, height=2)
+TotalSongs.place(x=592, y=285)
+VolumeInfo.place(x=592, y=315)
 MusicListBox.bind("<<ListboxSelect>>", musiclistboxpointer)
 PlayerForm.protocol("WM_DELETE_WINDOW", close)
 PlayerForm.mainloop()
