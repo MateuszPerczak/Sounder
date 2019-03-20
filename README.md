@@ -16,6 +16,6 @@ Main programmer, designer: Mateusz Perczak
 + tkinter
 
 ## Some pictures of application
-![Picture of playing music in application](https://github.com/losek1/Py_MusicPlayer/blob/master/images/S_2.7.1.PNG)
-![Picture of playing music in application](https://github.com/losek1/Py_MusicPlayer/blob/master/images/S_2.7.1_2.PNG)
-![Picture without any playing song](https://github.com/losek1/Py_MusicPlayer/blob/master/images/S_2.7.1_3.PNG)
+![Picture of playing music in application](https://github.com/losek1/Sounder/blob/master/images/NEW0.PMG)
+![Picture of playing music in application](https://github.com/losek1/Sounder/blob/master/images/NEW2.PNG)
+![Picture without any playing song](https://github.com/losek1/Sounder/blob/master/images/NEW1.PNG)

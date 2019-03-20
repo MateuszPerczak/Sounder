@@ -10,7 +10,7 @@ import tkinter.messagebox
 
 PlayerForm = Tk()
 # dir
-sounderdir = os.getcwd()
+sounderdir = os.path.dirname(sys.executable)
 userdir = os.path.expanduser('~')
 # end
 PlayerForm.geometry('800x500')
