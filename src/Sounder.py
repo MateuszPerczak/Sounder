@@ -65,6 +65,7 @@ def musicscan():
     global listofsongs
     global state
     global songnumber
+    directory = directory.rstrip('\n')
     state = 0
     songnumber = 0
     maxsong = -1
@@ -152,6 +153,7 @@ def update(cstate):
                 TSongs.set("Songs: {}".format(maxsong))
             listofsongs.reverse()
             for file in listofsongs:
+                file = file.rstrip('.mp3')
                 MusicListBox.insert(0, file)
             listofsongs.reverse()
             if mixer.music.get_busy():
@@ -198,9 +200,9 @@ def playsong():
         elif playbuttonstate == 0:
             mixer.music.load(listofsongs[songnumber])
             if len(listofsongs[songnumber]) > 60:
-                PlayLabelText.set(listofsongs[songnumber][0:60] + "...mp3")
+                PlayLabelText.set(listofsongs[songnumber][0:64])
             else:
-                PlayLabelText.set(listofsongs[songnumber])
+                PlayLabelText.set(str(listofsongs[songnumber]).rstrip('.mp3'))
             mixer.music.play()
             PlayButton.configure(image=Pauseimg)
             playbuttonstate = 1
@@ -230,9 +232,9 @@ def nextsong():
                 mixer.music.load(listofsongs[songnumber])
                 mixer.music.play()
                 if len(listofsongs[songnumber]) > 60:
-                    PlayLabelText.set(listofsongs[songnumber][0:60] + "...mp3")
+                    PlayLabelText.set(listofsongs[songnumber][0:64])
                 else:
-                    PlayLabelText.set(listofsongs[songnumber])
+                    PlayLabelText.set(str(listofsongs[songnumber]).rstrip('.mp3'))
                 preapir()
         if playbuttonstate == 0:
             if songnumber < maxsong:
@@ -244,9 +246,9 @@ def nextsong():
                 mixer.music.load(listofsongs[songnumber])
                 mixer.music.play()
                 if len(listofsongs[songnumber]) > 60:
-                    PlayLabelText.set(listofsongs[songnumber][0:60] + "...mp3")
+                    PlayLabelText.set(listofsongs[songnumber][0:64])
                 else:
-                    PlayLabelText.set(listofsongs[songnumber])
+                    PlayLabelText.set(str(listofsongs[songnumber]).rstrip('.mp3'))
                 preapir()
 
 
@@ -264,9 +266,9 @@ def previoussong():
                 mixer.music.load(listofsongs[songnumber])
                 mixer.music.play()
                 if len(listofsongs[songnumber]) > 60:
-                    PlayLabelText.set(listofsongs[songnumber][0:60] + "...mp3")
+                    PlayLabelText.set(listofsongs[songnumber][0:64])
                 else:
-                    PlayLabelText.set(listofsongs[songnumber])
+                    PlayLabelText.set(str(listofsongs[songnumber]).rstrip('.mp3'))
                 preapir()
         if playbuttonstate == 0:
             if songnumber > 0:
@@ -278,9 +280,9 @@ def previoussong():
                 mixer.music.load(listofsongs[songnumber])
                 mixer.music.play()
                 if len(listofsongs[songnumber]) > 60:
-                    PlayLabelText.set(listofsongs[songnumber][0:60] + "...mp3")
+                    PlayLabelText.set(listofsongs[songnumber][0:60])
                 else:
-                    PlayLabelText.set(listofsongs[songnumber])
+                    PlayLabelText.set(str(listofsongs[songnumber]).rstrip('.mp3'))
                 preapir()
 
 
@@ -301,7 +303,7 @@ def musiclistboxpointer(event):
             for Song in selected:
                 curent = MusicListBox.get(Song)
             for nr, Song in enumerate(listofsongs):
-                if Song == curent:
+                if Song.rstrip('.mp3') == curent:
                     mixer.music.load(listofsongs[nr])
                     songnumber = nr
                     mixer.music.play()
@@ -309,16 +311,19 @@ def musiclistboxpointer(event):
                         playbuttonstate = 1
                         PlayButton.configure(image=Pauseimg)
                     if len(listofsongs[songnumber]) > 60:
-                        PlayLabelText.set(listofsongs[songnumber][0:60] + "...mp3")
+                        PlayLabelText.set(listofsongs[songnumber][0:64])
                     else:
-                        PlayLabelText.set(listofsongs[songnumber])
+                        PlayLabelText.set(str(listofsongs[songnumber]).rstrip('.mp3'))
                     preapir()
 
 
 def volume(value):
     value = float(value)
     value = value / 100
-    TVol.set("Volume: {}%".format(int(value * 100)))
+    if value == 0.99:
+        TVol.set("Volume: 100%")
+    else:
+        TVol.set("Volume: {}%".format(int(value * 100)))
     mixer.music.set_volume(value)
 
 
@@ -427,7 +432,7 @@ def info():
     infoframe.iconbitmap(sounderdir + "\\Soundericon.ico")
     infoframe.configure(background='#fff')
     infoframe.grab_set()
-    verlabel = ttk.Label(infoframe, text="Sounder 2.7.3", font='Bahnschrift 11', style="W.TLabel")
+    verlabel = ttk.Label(infoframe, text="Sounder 2.7.4", font='Bahnschrift 11', style="W.TLabel")
     authorlabel = ttk.Label(infoframe, text="By: Mateusz Perczak", font='Bahnschrift 11', style="W.TLabel")
     musiclabel = ttk.Label(infoframe, image=InfoMusic, style="W.TLabel")
     copylabel = ttk.Label(infoframe, image=Copyright, style="W.TLabel")
