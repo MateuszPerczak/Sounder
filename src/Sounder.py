@@ -37,6 +37,7 @@ NowYear = StringVar()
 Avtime = StringVar()
 TSongs = StringVar()
 TVol = StringVar()
+ETimeVar = StringVar()
 maxsong = 0
 playbuttonstate = 0
 mode = 0
@@ -148,9 +149,9 @@ def update(cstate):
     try:
         if cstate == 1:
             if maxsong == 0:
-                TSongs.set("Song: {}".format(maxsong))
+                TSongs.set("Song: {}".format(maxsong + 1))
             elif maxsong > 0:
-                TSongs.set("Songs: {}".format(maxsong))
+                TSongs.set("Songs: {}".format(maxsong + 1))
             listofsongs.reverse()
             for file in listofsongs:
                 file = file.rstrip('.mp3')
@@ -351,6 +352,7 @@ def preapir():
         YearLabelText.set("Year: " + str(fileyear))
     except:
         YearLabelText.set("Year: Unknown")
+
     mins, secs = divmod(file.info.length, 60)
     mins = int(mins)
     secs = int(secs)
@@ -366,13 +368,14 @@ def preapir():
 def progressbarfill(totallength):
     global playbuttonstate
     MusicProgressBar["maximum"] = totallength
-    elapsed = 1.0
-    while round(elapsed, 1) <= totallength and mixer.music.get_busy():
-        elapsed += 0.1
+    elapsed = round(mixer.music.get_pos() / 1000, 1)
+    while elapsed <= totallength and mixer.music.get_busy():
         MusicProgressBar["value"] = elapsed
+        emin, esec = divmod(elapsed, 60)
+        ETimeVar.set(str(int(emin)) + ":" + str(int(esec)).zfill(2))
+        elapsed = round(mixer.music.get_pos() / 1000, 1)
         time.sleep(0.10)
-    if round(elapsed, 1) >= totallength - 3:
-        MusicProgressBar["value"] = totallength
+    if elapsed >= totallength - 3:
         PlayButton.configure(image=Playimg)
         playbuttonstate = 0
         playmode()
@@ -412,6 +415,7 @@ def switchmode():
 
 
 def close():
+    global datatable
     if mixer.music.get_busy():
         check = tkinter.messagebox.askquestion('Sounder!', 'Are you sure you want to quit?')
         if check == 'yes':
@@ -432,7 +436,7 @@ def info():
     infoframe.iconbitmap(sounderdir + "\\Soundericon.ico")
     infoframe.configure(background='#fff')
     infoframe.grab_set()
-    verlabel = ttk.Label(infoframe, text="Sounder 2.7.4", font='Bahnschrift 11', style="W.TLabel")
+    verlabel = ttk.Label(infoframe, text="Sounder 2.7.5", font='Bahnschrift 11', style="W.TLabel")
     authorlabel = ttk.Label(infoframe, text="By: Mateusz Perczak", font='Bahnschrift 11', style="W.TLabel")
     musiclabel = ttk.Label(infoframe, image=InfoMusic, style="W.TLabel")
     copylabel = ttk.Label(infoframe, image=Copyright, style="W.TLabel")
@@ -490,6 +494,7 @@ SouInfo = ttk.Label(PlayerForm, text="Info", font='Bahnschrift 11', style="W.TLa
 SouSeperator = ttk.Separator(PlayerForm, orient=HORIZONTAL)
 TotalSongs = ttk.Label(PlayerForm, textvariable=TSongs, font='Bahnschrift 11', style="W.TLabel")
 VolumeInfo = ttk.Label(PlayerForm, textvariable=TVol, font='Bahnschrift 11', style="W.TLabel")
+ElapsedTime = ttk.Label(PlayerForm, textvariable=ETimeVar, font='Bahnschrift 8', style="W.TLabel")
 
 # init ui
 firststart()
@@ -502,6 +507,7 @@ BitrateLabelText.set("Bitrate: ")
 YearLabelText.set("Year: ")
 TimeLabelText.set("Time: ")
 SampleLabelText.set("Sample Rate: ")
+ETimeVar.set("0:00")
 DirectoryLabelText.set(directory)
 update(state)
 activetime = threading.Thread(target=soundertime, args=())
@@ -513,7 +519,7 @@ DirectoryChangeButton.place(x=32, y=0)
 RefreshButton.place(x=1, y=0)
 DirectoryLabel.place(x=66, y=2, width=651, height=28)
 MusicListBox.place(x=1, y=32, width=550, height=388)
-PlayLabel.place(x=62, y=450)
+PlayLabel.place(x=62, y=440)
 SampleLabel.place(x=597, y=145)
 PlayBitrate.place(x=597, y=115)
 GenreLabel.place(x=597, y=85)
@@ -532,6 +538,7 @@ SouInfo.place(x=666, y=250)
 SouSeperator.place(x=592, y=280, width=170, height=2)
 TotalSongs.place(x=592, y=285)
 VolumeInfo.place(x=592, y=315)
+ElapsedTime.place(x=62, y=460)
 MusicListBox.bind("<<ListboxSelect>>", musiclistboxpointer)
 PlayerForm.protocol("WM_DELETE_WINDOW", close)
 PlayerForm.mainloop()
