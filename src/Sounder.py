@@ -165,6 +165,7 @@ def update(cstate):
             maxsong = -1
             listofsongs = []
             TSongs.set("Songs: 0")
+            ETimeVar.set("0:00")
     except:
         print("Unexpected char")
 
@@ -194,25 +195,35 @@ def playsong():
     global state
     if state == 1:
         if playbuttonstate == 1:
-            mixer.music.stop()
+            mixer.music.pause()
             time.sleep(0.1)
             PlayButton.configure(image=Playimg)
             playbuttonstate = 0
         elif playbuttonstate == 0:
-            mixer.music.load(listofsongs[songnumber])
-            if len(listofsongs[songnumber]) > 60:
-                PlayLabelText.set(listofsongs[songnumber][0:64])
+            if mixer.music.get_busy():
+                if len(listofsongs[songnumber]) > 60:
+                    PlayLabelText.set(listofsongs[songnumber][0:64])
+                else:
+                    PlayLabelText.set(str(listofsongs[songnumber]).rstrip('.mp3'))
+                mixer.music.unpause()
+                PlayButton.configure(image=Pauseimg)
+                playbuttonstate = 1
             else:
-                PlayLabelText.set(str(listofsongs[songnumber]).rstrip('.mp3'))
-            mixer.music.play()
-            PlayButton.configure(image=Pauseimg)
-            playbuttonstate = 1
-            preapir()
+                mixer.music.load(listofsongs[songnumber])
+                if len(listofsongs[songnumber]) > 60:
+                    PlayLabelText.set(listofsongs[songnumber][0:64])
+                else:
+                    PlayLabelText.set(str(listofsongs[songnumber]).rstrip('.mp3'))
+                mixer.music.play()
+                PlayButton.configure(image=Pauseimg)
+                playbuttonstate = 1
+                preapir()
     elif state == 0:
         if playbuttonstate == 1:
             mixer.music.stop()
             time.sleep(0.1)
             PlayLabelText.set("")
+            ETimeVar.set("0:00")
             PlayButton.configure(image=Playimg)
             playbuttonstate = 0
 
@@ -375,7 +386,7 @@ def progressbarfill(totallength):
         ETimeVar.set(str(int(emin)) + ":" + str(int(esec)).zfill(2))
         elapsed = round(mixer.music.get_pos() / 1000, 1)
         time.sleep(0.10)
-    if elapsed >= totallength - 3:
+    if elapsed >= totallength:
         PlayButton.configure(image=Playimg)
         playbuttonstate = 0
         playmode()
@@ -415,8 +426,8 @@ def switchmode():
 
 
 def close():
-    global datatable
-    if mixer.music.get_busy():
+    global playbuttonstate
+    if playbuttonstate == 1:
         check = tkinter.messagebox.askquestion('Sounder!', 'Are you sure you want to quit?')
         if check == 'yes':
             mixer.music.stop()
@@ -494,7 +505,7 @@ SouInfo = ttk.Label(PlayerForm, text="Info", font='Bahnschrift 11', style="W.TLa
 SouSeperator = ttk.Separator(PlayerForm, orient=HORIZONTAL)
 TotalSongs = ttk.Label(PlayerForm, textvariable=TSongs, font='Bahnschrift 11', style="W.TLabel")
 VolumeInfo = ttk.Label(PlayerForm, textvariable=TVol, font='Bahnschrift 11', style="W.TLabel")
-ElapsedTime = ttk.Label(PlayerForm, textvariable=ETimeVar, font='Bahnschrift 8', style="W.TLabel")
+ElapsedTime = ttk.Label(PlayerForm, textvariable=ETimeVar, font='Bahnschrift 10', style="W.TLabel")
 
 # init ui
 firststart()
