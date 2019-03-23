@@ -376,12 +376,13 @@ def progressbarfill(totallength):
     MusicProgressBar["maximum"] = totallength
     elapsed = round(mixer.music.get_pos() / 1000, 1)
     while elapsed <= totallength and mixer.music.get_busy():
+        elapsed = round(mixer.music.get_pos() / 1000, 1)
         MusicProgressBar["value"] = elapsed
         emin, esec = divmod(elapsed, 60)
         ETimeVar.set(str(int(emin)) + ":" + str(int(esec)).zfill(2))
-        elapsed = round(mixer.music.get_pos() / 1000, 1)
-        time.sleep(0.200)
+        time.sleep(0.1)
     if elapsed >= totallength - 3:
+        mixer.music.stop()
         PlayButton.configure(image=Playimg)
         playbuttonstate = 0
         playmode()
