@@ -7,7 +7,6 @@ from tkinter import *
 from tkinter import ttk
 from tkinter.filedialog import askdirectory
 import tkinter.messagebox
-
 PlayerForm = Tk()
 # dir
 sounderdir = os.path.dirname(sys.executable)
@@ -20,7 +19,7 @@ PlayerForm.iconbitmap(sounderdir + "\\Soundericon.ico")
 PlayerForm.configure(background='#fff')
 s = ttk.Style()
 s.theme_use('clam')
-s.configure("G.Horizontal.TProgressbar", foreground='#00', background='#000', lightcolor='#000',
+s.configure("G.Horizontal.TProgressbar", foreground='#000', background='#000', lightcolor='#000',
             darkcolor='#fff', bordercolor='#fff', troughcolor='#fff')
 s.configure("W.TLabel", background='#fff', border='0')
 s.configure("TButton", background='#fff', relief="flat")
@@ -201,10 +200,6 @@ def playsong():
             playbuttonstate = 0
         elif playbuttonstate == 0:
             if mixer.music.get_busy():
-                if len(listofsongs[songnumber]) > 60:
-                    PlayLabelText.set(listofsongs[songnumber][0:64])
-                else:
-                    PlayLabelText.set(str(listofsongs[songnumber]).rstrip('.mp3'))
                 mixer.music.unpause()
                 PlayButton.configure(image=Pauseimg)
                 playbuttonstate = 1
@@ -385,8 +380,8 @@ def progressbarfill(totallength):
         emin, esec = divmod(elapsed, 60)
         ETimeVar.set(str(int(emin)) + ":" + str(int(esec)).zfill(2))
         elapsed = round(mixer.music.get_pos() / 1000, 1)
-        time.sleep(0.10)
-    if elapsed >= totallength:
+        time.sleep(0.200)
+    if elapsed >= totallength - 3:
         PlayButton.configure(image=Playimg)
         playbuttonstate = 0
         playmode()
@@ -447,7 +442,7 @@ def info():
     infoframe.iconbitmap(sounderdir + "\\Soundericon.ico")
     infoframe.configure(background='#fff')
     infoframe.grab_set()
-    verlabel = ttk.Label(infoframe, text="Sounder 2.7.5", font='Bahnschrift 11', style="W.TLabel")
+    verlabel = ttk.Label(infoframe, text="Sounder 2.7.6", font='Bahnschrift 11', style="W.TLabel")
     authorlabel = ttk.Label(infoframe, text="By: Mateusz Perczak", font='Bahnschrift 11', style="W.TLabel")
     musiclabel = ttk.Label(infoframe, image=InfoMusic, style="W.TLabel")
     copylabel = ttk.Label(infoframe, image=Copyright, style="W.TLabel")
@@ -506,7 +501,6 @@ SouSeperator = ttk.Separator(PlayerForm, orient=HORIZONTAL)
 TotalSongs = ttk.Label(PlayerForm, textvariable=TSongs, font='Bahnschrift 11', style="W.TLabel")
 VolumeInfo = ttk.Label(PlayerForm, textvariable=TVol, font='Bahnschrift 11', style="W.TLabel")
 ElapsedTime = ttk.Label(PlayerForm, textvariable=ETimeVar, font='Bahnschrift 10', style="W.TLabel")
-
 # init ui
 firststart()
 mixer.music.set_volume(0.50)
