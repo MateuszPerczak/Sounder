@@ -195,7 +195,7 @@ def playsong():
     if state == 1:
         if playbuttonstate == 1:
             mixer.music.pause()
-            time.sleep(0.1)
+            time.sleep(0.18)
             PlayButton.configure(image=Playimg)
             playbuttonstate = 0
         elif playbuttonstate == 0:
@@ -216,7 +216,7 @@ def playsong():
     elif state == 0:
         if playbuttonstate == 1:
             mixer.music.stop()
-            time.sleep(0.1)
+            time.sleep(0.18)
             PlayLabelText.set("")
             ETimeVar.set("0:00")
             PlayButton.configure(image=Playimg)
@@ -232,7 +232,7 @@ def nextsong():
         if playbuttonstate == 1:
             if songnumber < maxsong:
                 mixer.music.stop()
-                time.sleep(0.1)
+                time.sleep(0.18)
                 PlayButton.configure(image=Pauseimg)
                 playbuttonstate = 1
                 songnumber += 1
@@ -246,7 +246,7 @@ def nextsong():
         if playbuttonstate == 0:
             if songnumber < maxsong:
                 mixer.music.stop()
-                time.sleep(0.1)
+                time.sleep(0.18)
                 playbuttonstate = 1
                 PlayButton.configure(image=Pauseimg)
                 songnumber += 1
@@ -267,7 +267,7 @@ def previoussong():
         if playbuttonstate == 1:
             if songnumber > 0:
                 mixer.music.stop()
-                time.sleep(0.1)
+                time.sleep(0.18)
                 PlayButton.configure(image=Pauseimg)
                 songnumber -= 1
                 mixer.music.load(listofsongs[songnumber])
@@ -280,7 +280,7 @@ def previoussong():
         if playbuttonstate == 0:
             if songnumber > 0:
                 mixer.music.stop()
-                time.sleep(0.1)
+                time.sleep(0.18)
                 playbuttonstate = 1
                 PlayButton.configure(image=Pauseimg)
                 songnumber -= 1
@@ -306,7 +306,7 @@ def musiclistboxpointer(event):
         selected = MusicListBox.curselection()
         if selected != ():
             mixer.music.stop()
-            time.sleep(0.15)
+            time.sleep(0.120)
             for Song in selected:
                 curent = MusicListBox.get(Song)
             for nr, Song in enumerate(listofsongs):
@@ -372,28 +372,28 @@ def preapir():
 
 def progressbarfill(totallength):
     global playbuttonstate
-    activ = False
-    pause = 0
+    wait = False
+    waittime = 0
+    activtime = 0
     MusicProgressBar["maximum"] = totallength
-    atime = mixer.music.get_pos() / 1000
-    while mixer.music.get_busy() == 1:
+    while mixer.music.get_busy() == 1 and activtime <= totallength - 0.1:
         # time smoothing
-        if playbuttonstate == 1 and activ:
-                if pause < 6:
-                    pause += 1
+        if playbuttonstate == 1 and wait:
+                if waittime < 3:
+                    waittime += 1
                 else:
-                    pause = 0
-                    activ = False
-        elif playbuttonstate == 1 and not activ:
-            atime = mixer.music.get_pos() / 1000
-        elif playbuttonstate == 0:
-            activ = True
+                    waittime = 0
+                    wait = False
+        elif playbuttonstate == 1 and not wait:
+            activtime = mixer.music.get_pos() / 1000
+            MusicProgressBar["value"] = activtime
+            emin, esec = divmod(activtime, 60)
+            ETimeVar.set(str(int(emin)) + ":" + str(int(esec)).zfill(2))
+        elif playbuttonstate == 0 and not wait:
+            wait = True
         # end
-        MusicProgressBar["value"] = atime
-        emin, esec = divmod(atime, 60)
-        ETimeVar.set(str(int(emin)) + ":" + str(int(esec)).zfill(2))
-        time.sleep(0.050)
-    if round(mixer.music.get_pos() / 1000, 2) >= totallength - 4:
+        time.sleep(0.1)
+    if activtime >= totallength - 0.4:
         mixer.music.stop()
         PlayButton.configure(image=Playimg)
         playbuttonstate = 0
@@ -455,7 +455,7 @@ def info():
     infoframe.iconbitmap(sounderdir + "\\Soundericon.ico")
     infoframe.configure(background='#fff')
     infoframe.grab_set()
-    verlabel = ttk.Label(infoframe, text="Sounder 2.7.7", font='Bahnschrift 11', style="W.TLabel")
+    verlabel = ttk.Label(infoframe, text="Sounder 2.7.8", font='Bahnschrift 11', style="W.TLabel")
     authorlabel = ttk.Label(infoframe, text="By: Mateusz Perczak", font='Bahnschrift 11', style="W.TLabel")
     musiclabel = ttk.Label(infoframe, image=InfoMusic, style="W.TLabel")
     copylabel = ttk.Label(infoframe, image=Copyright, style="W.TLabel")
