@@ -184,7 +184,7 @@ def refreshdirectory():
             state = 1
             listofsongs.append(file)
     update(state)
-    time.sleep(0.07)
+    time.sleep(0.1)
 
 
 def playsong():
@@ -306,7 +306,7 @@ def musiclistboxpointer(event):
         selected = MusicListBox.curselection()
         if selected != ():
             mixer.music.stop()
-            time.sleep(0.1)
+            time.sleep(0.15)
             for Song in selected:
                 curent = MusicListBox.get(Song)
             for nr, Song in enumerate(listofsongs):
@@ -318,7 +318,7 @@ def musiclistboxpointer(event):
                         playbuttonstate = 1
                         PlayButton.configure(image=Pauseimg)
                     if len(listofsongs[songnumber]) > 60:
-                        PlayLabelText.set(listofsongs[songnumber][0:64])
+                        PlayLabelText.set(listofsongs[songnumber][0:64].rstrip('.mp3'))
                     else:
                         PlayLabelText.set(str(listofsongs[songnumber]).rstrip('.mp3'))
                     preapir()
@@ -358,7 +358,6 @@ def preapir():
         YearLabelText.set("Year: " + str(fileyear))
     except:
         YearLabelText.set("Year: Unknown")
-
     mins, secs = divmod(file.info.length, 60)
     mins = int(mins)
     secs = int(secs)
@@ -373,15 +372,28 @@ def preapir():
 
 def progressbarfill(totallength):
     global playbuttonstate
+    activ = False
+    pause = 0
     MusicProgressBar["maximum"] = totallength
-    elapsed = round(mixer.music.get_pos() / 1000, 1)
-    while elapsed <= totallength and mixer.music.get_busy():
-        elapsed = round(mixer.music.get_pos() / 1000, 1)
-        MusicProgressBar["value"] = elapsed
-        emin, esec = divmod(elapsed, 60)
+    atime = mixer.music.get_pos() / 1000
+    while mixer.music.get_busy() == 1:
+        # time smoothing
+        if playbuttonstate == 1 and activ:
+                if pause < 6:
+                    pause += 1
+                else:
+                    pause = 0
+                    activ = False
+        elif playbuttonstate == 1 and not activ:
+            atime = mixer.music.get_pos() / 1000
+        elif playbuttonstate == 0:
+            activ = True
+        # end
+        MusicProgressBar["value"] = atime
+        emin, esec = divmod(atime, 60)
         ETimeVar.set(str(int(emin)) + ":" + str(int(esec)).zfill(2))
-        time.sleep(0.1)
-    if elapsed >= totallength - 3:
+        time.sleep(0.050)
+    if round(mixer.music.get_pos() / 1000, 2) >= totallength - 4:
         mixer.music.stop()
         PlayButton.configure(image=Playimg)
         playbuttonstate = 0
@@ -443,7 +455,7 @@ def info():
     infoframe.iconbitmap(sounderdir + "\\Soundericon.ico")
     infoframe.configure(background='#fff')
     infoframe.grab_set()
-    verlabel = ttk.Label(infoframe, text="Sounder 2.7.6", font='Bahnschrift 11', style="W.TLabel")
+    verlabel = ttk.Label(infoframe, text="Sounder 2.7.7", font='Bahnschrift 11', style="W.TLabel")
     authorlabel = ttk.Label(infoframe, text="By: Mateusz Perczak", font='Bahnschrift 11', style="W.TLabel")
     musiclabel = ttk.Label(infoframe, image=InfoMusic, style="W.TLabel")
     copylabel = ttk.Label(infoframe, image=Copyright, style="W.TLabel")
