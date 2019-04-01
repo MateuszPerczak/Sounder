@@ -449,13 +449,13 @@ def close():
 
 def info():
     infoframe = Toplevel()
-    infoframe.geometry("300x200")
+    infoframe.geometry("300x220")
     infoframe.resizable(width=False, height=False)
     infoframe.title("Sounder Info")
     infoframe.iconbitmap(sounderdir + "\\Soundericon.ico")
     infoframe.configure(background='#fff')
     infoframe.grab_set()
-    verlabel = ttk.Label(infoframe, text="Sounder 2.7.8", font='Bahnschrift 11', style="W.TLabel")
+    verlabel = ttk.Label(infoframe, text="Version 2.7.8", font='Bahnschrift 11', style="W.TLabel")
     authorlabel = ttk.Label(infoframe, text="By: Mateusz Perczak", font='Bahnschrift 11', style="W.TLabel")
     musiclabel = ttk.Label(infoframe, image=InfoMusic, style="W.TLabel")
     copylabel = ttk.Label(infoframe, image=Copyright, style="W.TLabel")
@@ -466,13 +466,13 @@ def info():
                                                                                                           "://github"
                                                                                                           ".com/losek1"
                                                                                                           "/Sounder"))
-    verlabel.place(x=110, y=74)
-    authorlabel.place(x=86, y=100)
-    musiclabel.place(x=125, y=15)
-    copylabel.place(x=2, y=170)
-    infolabel.place(x=32, y=172)
-    atlabel.place(x=42, y=120)
-    forknutton.place(x=268, y=166)
+    musiclabel.place(x=90, y=15)
+    verlabel.place(x=110, y=94)
+    authorlabel.place(x=86, y=120)
+    copylabel.place(x=2, y=190)
+    infolabel.place(x=32, y=192)
+    atlabel.place(x=42, y=140)
+    forknutton.place(x=268, y=186)
 
 
 def soundertime():
