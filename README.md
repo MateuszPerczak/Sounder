@@ -4,7 +4,8 @@
 Python mp3 music player.
 
 ## Authors
-Main programmer, designer: Mateusz Perczak 
+Main programmer, designer: Mateusz Perczak
+Logo designer: reallinfo
 
 ## Python version:
 3.6.8
