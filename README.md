@@ -1,3 +1,5 @@
+<p align="left"><img src="images/logo/horizontal.png" alt="Sounder" height="120px"></p>
+
 # Py_MusicPlayer
 Python mp3 music player.
 
