@@ -23,3 +23,4 @@ Logo designer: reallinfo
 ![Picture of playing music in application](https://github.com/losek1/Sounder/blob/master/images/NEW0.PNG)
 ![Picture of playing music in application](https://github.com/losek1/Sounder/blob/master/images/NEW2.PNG)
 ![Picture without any playing song](https://github.com/losek1/Sounder/blob/master/images/NEW1.PNG)
+![Picture of dark mode](https://github.com/losek1/Sounder/blob/master/images/NEW3.PNG)
