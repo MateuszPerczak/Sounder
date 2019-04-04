@@ -7,17 +7,18 @@ from tkinter import *
 from tkinter import ttk
 from tkinter.filedialog import askdirectory
 import tkinter.messagebox
-PlayerForm = Tk()
 # dir
 sounderdir = os.path.dirname(sys.executable)
 userdir = os.path.expanduser('~')
 # end
+PlayerForm = Tk()
 PlayerForm.geometry('800x500')
 PlayerForm.title("Sounder!")
 PlayerForm.resizable(width=FALSE, height=FALSE)
 PlayerForm.iconbitmap(sounderdir + "\\Soundericon.ico")
 s = ttk.Style()
 s.theme_use('clam')
+# variables
 PlayLabelText = StringVar()
 DirectoryLabelText = StringVar()
 GenreLabelText = StringVar()
@@ -36,6 +37,10 @@ playbuttonstate = 0
 mode = 0
 themeset = "Light"
 infoframe = None
+threads = 0
+totallength = 0.0
+# end
+# images
 PlayPhotoimg = PhotoImage(file=sounderdir + "\\musicicon.png")
 Playimg = PhotoImage(file=sounderdir + "\\play.png")
 Pauseimg = PhotoImage(file=sounderdir + "\\pause.png")
@@ -66,17 +71,14 @@ InfoMusicD = PhotoImage(file=sounderdir + "\\musicinfod.png")
 CopyrightD = PhotoImage(file=sounderdir + "\\copyrightd.png")
 ForkD = PhotoImage(file=sounderdir + "\\forkd.png")
 ThemeD = PhotoImage(file=sounderdir + "\\themed.png")
+# end
 # year
 NowYear.set("Copyright 2018-{}".format(time.strftime("%Y")))
 # end
 
 
 def musicscan():
-    global directory
-    global maxsong
-    global listofsongs
-    global state
-    global songnumber
+    global directory, maxsong, listofsongs, state, songnumber
     directory = directory.rstrip('\n')
     state = 0
     songnumber = 0
@@ -97,8 +99,7 @@ def musicscan():
 
 
 def firststart():
-    global directory
-    global themeset
+    global directory, themeset
     if os.path.exists('settings.ini'):
         with open('settings.ini', 'r') as data:
             directory = data.readline()
@@ -153,9 +154,7 @@ def firststart():
 
 
 def changedirectory():
-    global directory
-    global sounderdir
-    global state
+    global directory, sounderdir, state
     newdirectory = askdirectory()
     if directory != newdirectory and newdirectory != "" or None:
         os.chdir(sounderdir)
@@ -169,9 +168,7 @@ def changedirectory():
 
 
 def update(cstate):
-    global listofsongs
-    global maxsong
-    global songnumber
+    global listofsongs, maxsong, songnumber
     try:
         if cstate == 1:
             if maxsong == 0:
@@ -193,14 +190,11 @@ def update(cstate):
             TSongs.set("Songs: 0")
             ETimeVar.set("0:00")
     except:
-        print("Unexpected char")
+        pass
 
 
 def refreshdirectory():
-    global directory
-    global maxsong
-    global listofsongs
-    global state
+    global directory, maxsong, listofsongs, state
     state = 0
     maxsong = -1
     listofsongs = []
@@ -211,15 +205,11 @@ def refreshdirectory():
             state = 1
             listofsongs.append(file)
     update(state)
-    time.sleep(0.1)
+    time.sleep(0.2)
 
 
 def playsong():
-    global playbuttonstate
-    global songnumber
-    global listofsongs
-    global state
-    global themeset
+    global playbuttonstate, songnumber, listofsongs, state, themeset
     if state == 1:
         if playbuttonstate == 1:
             mixer.music.pause()
@@ -264,11 +254,7 @@ def playsong():
 
 
 def nextsong():
-    global playbuttonstate
-    global songnumber
-    global state
-    global maxsong
-    global themeset
+    global playbuttonstate, songnumber, state, maxsong, themeset
     if state == 1:
         if playbuttonstate == 1:
             if songnumber < maxsong:
@@ -307,10 +293,7 @@ def nextsong():
 
 
 def previoussong():
-    global playbuttonstate
-    global songnumber
-    global state
-    global themeset
+    global playbuttonstate, songnumber, state, themeset
     if state == 1:
         if playbuttonstate == 1:
             if songnumber > 0:
@@ -323,8 +306,8 @@ def previoussong():
                 songnumber -= 1
                 mixer.music.load(listofsongs[songnumber])
                 mixer.music.play()
-                if len(listofsongs[songnumber]) > 60:
-                    PlayLabelText.set(listofsongs[songnumber][0:60])
+                if len(listofsongs[songnumber]) > 50:
+                    PlayLabelText.set(listofsongs[songnumber][0:50])
                 else:
                     PlayLabelText.set(str(listofsongs[songnumber]).rstrip('.mp3'))
                 preapir()
@@ -340,34 +323,26 @@ def previoussong():
                 songnumber -= 1
                 mixer.music.load(listofsongs[songnumber])
                 mixer.music.play()
-                if len(listofsongs[songnumber]) > 60:
-                    PlayLabelText.set(listofsongs[songnumber][0:60])
+                if len(listofsongs[songnumber]) > 50:
+                    PlayLabelText.set(listofsongs[songnumber][0:50])
                 else:
                     PlayLabelText.set(str(listofsongs[songnumber]).rstrip('.mp3'))
                 preapir()
 
 
-def musiclistboxpointer(event):
-    print(event)
-    global selected
-    global curent
-    global state
-    global songnumber
-    global playbuttonstate
-    global listofsongs
-    global themeset
+def musiclistboxpointer(e):
+    global selected, curent, state, songnumber, playbuttonstate, listofsongs, themeset
     if state == 1:
-        mixer.music.stop()
         selected = MusicListBox.curselection()
         if selected != ():
             mixer.music.stop()
-            time.sleep(0.12)
             for Song in selected:
                 curent = MusicListBox.get(Song)
             for nr, Song in enumerate(listofsongs):
                 if Song.rstrip('.mp3') == curent:
                     mixer.music.load(listofsongs[nr])
                     songnumber = nr
+                    # time.sleep(0.05)
                     mixer.music.play()
                     if playbuttonstate == 0:
                         playbuttonstate = 1
@@ -375,8 +350,8 @@ def musiclistboxpointer(event):
                             PlayButton.configure(image=Pauseimg)
                         elif themeset == "Dark":
                             PlayButton.configure(image=PauseimgD)
-                    if len(listofsongs[songnumber]) > 60:
-                        PlayLabelText.set(listofsongs[songnumber][0:60].rstrip('.mp3'))
+                    if len(listofsongs[songnumber]) > 50:
+                        PlayLabelText.set(listofsongs[songnumber][0:50].rstrip('.mp3'))
                     else:
                         PlayLabelText.set(str(listofsongs[songnumber]).rstrip('.mp3'))
                     preapir()
@@ -393,9 +368,7 @@ def volume(value):
 
 
 def preapir():
-    global listofsongs
-    global songnumber
-    global playbuttonstate
+    global listofsongs, songnumber, playbuttonstate, ilosc, totallength
     MusicListBox.selection_clear(0, END)
     MusicListBox.select_set(songnumber)
     file = MP3(listofsongs[songnumber])
@@ -423,15 +396,16 @@ def preapir():
     totallength = round(file.info.length, 1)
     if playbuttonstate == 0:
         PlayButton.configure(image=Pauseimg)
-    pbf = threading.Thread(target=progressbarfill, args=(totallength,))
-    pbf.daemon = True
-    pbf.start()
+    if not threads > 0:
+        music_progress = threading.Thread(target=progressbarfill,)
+        music_progress.daemon = True
+        music_progress.start()
 
 
-def progressbarfill(totallength):
-    global playbuttonstate
-    global themeset
+def progressbarfill():
+    global playbuttonstate, themeset, threads, totallength
     wait = False
+    threads += 1
     waittime = 0
     activtime = 0
     MusicProgressBar["maximum"] = totallength
@@ -451,7 +425,8 @@ def progressbarfill(totallength):
         elif playbuttonstate == 0 and not wait:
             wait = True
         # end
-        time.sleep(0.1)
+        time.sleep(0.2)
+    threads -= 1
     if activtime >= totallength - 0.4:
         mixer.music.stop()
         if themeset == "Light":
@@ -463,10 +438,7 @@ def progressbarfill(totallength):
 
 
 def playmode():
-    global mode
-    global songnumber
-    global maxsong
-    global state
+    global mode, songnumber, maxsong, state
     if state == 1:
         time.sleep(0.5)
         if mode == 0:
@@ -483,8 +455,7 @@ def playmode():
 
 
 def switchmode():
-    global mode
-    global themeset
+    global mode, themeset
     if mode == 0:
         mode = 1
         if themeset == "Light":
@@ -506,8 +477,7 @@ def switchmode():
 
 
 def close():
-    global themeset
-    global playbuttonstate
+    global themeset, playbuttonstate
     if playbuttonstate == 1:
         check = tkinter.messagebox.askquestion('Sounder!', 'Are you sure you want to quit?')
         if check == 'yes':
@@ -516,7 +486,6 @@ def close():
                 file.write(directory)
                 file.write('\n')
                 file.write(themeset)
-            os.chdir(directory)
             mixer.music.stop()
             PlayerForm.destroy()
         else:
@@ -527,21 +496,19 @@ def close():
             file.write(directory)
             file.write('\n')
             file.write(themeset)
-        os.chdir(directory)
         mixer.music.stop()
         PlayerForm.destroy()
 
 
 def info():
-    global themeset
-    global infoframe
+    global themeset, infoframe
     infoframe = Toplevel(PlayerForm)
     infoframe.geometry("300x220")
     infoframe.resizable(width=False, height=False)
     infoframe.title("Sounder Info")
     infoframe.iconbitmap(sounderdir + "\\Soundericon.ico")
     infoframe.grab_set()
-    verlabel = ttk.Label(infoframe, text="Version 2.7.9", font='Bahnschrift 11', style="W.TLabel")
+    verlabel = ttk.Label(infoframe, text="Version 2.8.0", font='Bahnschrift 11', style="W.TLabel")
     authorlabel = ttk.Label(infoframe, text="By: Mateusz Perczak", font='Bahnschrift 11', style="W.TLabel")
     musiclabel = ttk.Label(infoframe, image=InfoMusic, style="W.TLabel")
     copylabel = ttk.Label(infoframe, image=Copyright, style="W.TLabel")
@@ -572,9 +539,7 @@ def info():
 
 
 def themechange():
-    global themeset
-    global playbuttonstate
-    global infoframe
+    global themeset, playbuttonstate, infoframe, mode
     if infoframe is not None:
         infoframe.destroy()
     if themeset == "Dark":
@@ -591,19 +556,24 @@ def themechange():
         RefreshButton.configure(image=RefreshLabelimg)
         NextButton.configure(image=Forwardimg)
         PreviousButton.configure(image=Previousimg)
-        ModeButton.configure(image=RepeatNone)
         PlayImg.configure(image=PlayPhotoimg)
         if playbuttonstate == 1:
             PlayButton.configure(image=Pauseimg)
         elif playbuttonstate == 0:
             PlayButton.configure(image=Playimg)
+        if mode == 0:
+            ModeButton.configure(image=RepeatNone)
+        elif mode == 1:
+            ModeButton.configure(image=RepeatAll)
+        else:
+            ModeButton.configure(image=RepeatOne)
         if infoframe is not None:
             info()
     elif themeset == "Light":
         themeset = "Dark"
         PlayerForm.configure(background='#000')
         MusicListBox.configure(selectbackground="#1e88e5", foreground='#fff', background='#000')
-        s.configure("G.Horizontal.TProgressbar", foreground='#1e88e5', background='#1b5e20', lightcolor='#1e88e5',
+        s.configure("G.Horizontal.TProgressbar", foreground='#1e88e5', background='#1e88e5', lightcolor='#1e88e5',
                     darkcolor='#1e88e5', bordercolor='#000', troughcolor='#000')
         s.configure("W.TLabel", foreground='#fff', background='#000', border='0')
         s.configure("TButton", background='#000', relief="flat")
@@ -613,12 +583,17 @@ def themechange():
         RefreshButton.configure(image=RefreshLabelimgD)
         NextButton.configure(image=ForwardimgD)
         PreviousButton.configure(image=PreviousimgD)
-        ModeButton.configure(image=RepeatNoneD)
         PlayImg.configure(image=PlayPhotoimgD)
         if playbuttonstate == 1:
             PlayButton.configure(image=PauseimgD)
         elif playbuttonstate == 0:
             PlayButton.configure(image=PlayimgD)
+        if mode == 0:
+            ModeButton.configure(image=RepeatNoneD)
+        elif mode == 1:
+            ModeButton.configure(image=RepeatAllD)
+        else:
+            ModeButton.configure(image=RepeatOneD)
         if infoframe is not None:
             info()
 
@@ -668,7 +643,10 @@ mixer.music.set_volume(0.50)
 VolumeSlider.set(50)
 Avtime.set("It has been running for 0:00")
 GenreLabelText.set("Genre: ")
-PlayLabelText.set("Let's make some noise!")
+if themeset == "Dark":
+    PlayLabelText.set("I'm blue da ba dee da ba daa")
+else:
+    PlayLabelText.set("Never gonna give you up")
 BitrateLabelText.set("Bitrate: ")
 YearLabelText.set("Year: ")
 TimeLabelText.set("Time: ")
@@ -685,7 +663,6 @@ DirectoryChangeButton.place(x=32, y=0)
 RefreshButton.place(x=1, y=0)
 DirectoryLabel.place(x=66, y=2, width=651, height=28)
 MusicListBox.place(x=1, y=32, width=550, height=388)
-PlayLabel.place(x=62, y=440)
 SampleLabel.place(x=597, y=145)
 PlayBitrate.place(x=597, y=115)
 GenreLabel.place(x=597, y=85)
@@ -704,7 +681,8 @@ SouInfo.place(x=666, y=250)
 SouSeperator.place(x=592, y=280, width=170, height=2)
 TotalSongs.place(x=592, y=285)
 VolumeInfo.place(x=592, y=315)
-ElapsedTime.place(x=62, y=460)
+PlayLabel.place(x=62, y=442)
+ElapsedTime.place(x=62, y=462)
 MusicListBox.bind("<<ListboxSelect>>", musiclistboxpointer)
 PlayerForm.protocol("WM_DELETE_WINDOW", close)
 PlayerForm.mainloop()
