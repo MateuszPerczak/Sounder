@@ -8,8 +8,7 @@ from tkinter import ttk
 from tkinter.filedialog import askdirectory
 import tkinter.messagebox
 # dir
-sounderdir = os.getcwd()
-# sounderdir = os.path.dirname(sys.executable)
+ounderdir = os.path.dirname(sys.executable)
 userdir = os.path.expanduser('~')
 # end
 PlayerForm = Tk()
