@@ -8,7 +8,8 @@ from tkinter import ttk
 from tkinter.filedialog import askdirectory
 import tkinter.messagebox
 # dir
-sounderdir = os.path.dirname(sys.executable)
+sounderdir = os.getcwd()
+# sounderdir = os.path.dirname(sys.executable)
 userdir = os.path.expanduser('~')
 # end
 PlayerForm = Tk()
@@ -342,7 +343,6 @@ def musiclistboxpointer(e):
                 if Song.rstrip('.mp3') == curent:
                     mixer.music.load(listofsongs[nr])
                     songnumber = nr
-                    # time.sleep(0.05)
                     mixer.music.play()
                     if playbuttonstate == 0:
                         playbuttonstate = 1
@@ -394,6 +394,8 @@ def preapir():
     secs = int(secs)
     TimeLabelText.set("Time: " + str(mins) + ":" + str(secs).zfill(2))
     totallength = round(file.info.length, 1)
+    MusicProgressBar["value"] = 0
+    MusicProgressBar["maximum"] = totallength
     if playbuttonstate == 0:
         PlayButton.configure(image=Pauseimg)
     if not threads > 0:
@@ -408,7 +410,6 @@ def progressbarfill():
     threads += 1
     waittime = 0
     activtime = 0
-    MusicProgressBar["maximum"] = totallength
     while mixer.music.get_busy() == 1 and activtime <= totallength - 0.1:
         # time smoothing
         if playbuttonstate == 1 and wait:
