@@ -18,6 +18,7 @@ Logo designer: reallinfo
 + os
 + time
 + tkinter
++ json
 
 ## Some pictures of application
 ![Picture of playing music in application](https://github.com/losek1/Sounder/blob/master/images/NEW0.PNG)
