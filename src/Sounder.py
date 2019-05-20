@@ -1,14 +1,16 @@
 import os
 import time
 import threading
+import tkinter.messagebox
+import json
 from mutagen.mp3 import MP3
 from pygame import mixer
 from tkinter import *
 from tkinter import ttk
 from tkinter.filedialog import askdirectory
-import tkinter.messagebox
 # dir
-sounderdir = os.path.dirname(sys.executable)
+sounderdir = os.getcwd()
+# sounderdir = os.path.dirname(sys.executable)
 userdir = os.path.expanduser('~')
 # end
 PlayerForm = Tk()
@@ -39,6 +41,9 @@ themeset = "Light"
 infoframe = None
 threads = 0
 totallength = 0.0
+directory = ""
+version = "2.8.2"
+settings = {}
 # end
 # images
 PlayPhotoimg = PhotoImage(file=sounderdir + "\\musicicon.png")
@@ -92,74 +97,59 @@ def musicscan():
                 state = 1
                 listofsongs.append(file)
     except:
-        tkinter.messagebox.showwarning('Settings', 'Your settings file was corrupted!')
         os.chdir(sounderdir)
-        os.remove('settings.ini')
+        os.remove('cfg.json')
         firststart()
 
 
 def firststart():
-    global directory, themeset
-    if os.path.exists('settings.ini'):
-        with open('settings.ini', 'r') as data:
-            directory = data.readline()
-            theme = data.readline()
-            if theme != "" or None:
-                if theme == "Dark" or theme == "Light":
-                    themeset = theme.rstrip('\n')
-                    themechange()
-                    themechange()
-                else:
-                    themeset = "Dark"
-                    themechange()
-            else:
-                themeset = "Dark"
-                themechange()
-        if directory == "" or None:
+    global directory, themeset, settings
+    if os.path.exists('cfg.json'):
+        with open('cfg.json', 'r') as file:
+            try:
+                settings = json.load(file)
+            except:
+                settings["theme"] = "Light"
+        try:
+            directory = settings["directory"]
+        except:
             directory = askdirectory()
-            if directory == "" or None:
-                directory = userdir + '\\Music'
-                with open('settings.ini', 'a') as file:
-                    file.write(directory)
-                mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=4096)
-                mixer.init()
-                musicscan()
-            elif directory != "" or None:
-                with open('settings.ini', 'a') as file:
-                    file.write(directory)
-                mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=4096)
-                mixer.init()
-                musicscan()
-        elif directory != "" or None:
-            mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=4096)
-            mixer.init()
-            musicscan()
-    elif not os.path.exists('settings.ini'):
-        directory = askdirectory()
-        themeset = "Dark"
+            settings["directory"] = directory
+        try:
+            themeset = settings["theme"]
+            themechange()
+            themechange()
+        except:
+            settings["theme"] = "Light"
+            themeset = "Light"
+            themechange()
+            themechange()
+        with open('cfg.json', 'w') as file:
+            json.dump(settings, file)
+        mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=4096)
+        mixer.init()
+        musicscan()
+    elif not os.path.exists('cfg.json'):
+        settings["theme"] = "Light"
         themechange()
-        if directory == "" or None:
-            directory = userdir + '\\Music'
-            with open('settings.ini', 'a') as file:
-                file.write(directory)
-            mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=4096)
-            mixer.init()
-            musicscan()
-        elif directory != "" or None:
-            with open('settings.ini', 'a') as file:
-                file.write(directory)
-            mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=4096)
-            mixer.init()
-            musicscan()
+        themechange()
+        directory = askdirectory()
+        settings["directory"] = directory
+        with open('cfg.json', 'w') as file:
+            json.dump(settings, file)
+        mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=4096)
+        mixer.init()
+        musicscan()
 
 
 def changedirectory():
-    global directory, sounderdir, state
+    global directory, sounderdir, state, settings
     newdirectory = askdirectory()
     if directory != newdirectory and newdirectory != "" or None:
         os.chdir(sounderdir)
-        with open('settings.ini', 'w') as data:
-            data.write(newdirectory)
+        settings["directory"] = directory
+        with open('cfg.json', 'w') as file:
+            json.dump(settings, file)
         MusicListBox.delete(0, END)
         directory = newdirectory
         DirectoryLabelText.set(directory)
@@ -467,38 +457,40 @@ def switchmode():
 
 
 def close():
-    global themeset, playbuttonstate
+    global themeset, playbuttonstate, settings, directory, version
     if playbuttonstate == 1:
         check = tkinter.messagebox.askquestion('Sounder!', 'Are you sure you want to quit?')
         if check == 'yes':
             os.chdir(sounderdir)
-            with open('settings.ini', 'w') as file:
-                file.write(directory)
-                file.write('\n')
-                file.write(themeset)
+            settings["theme"] = themeset
+            settings["directory"] = directory
+            settings["version"] = version
+            with open('cfg.json', 'w') as file:
+                json.dump(settings, file)
             mixer.music.stop()
             PlayerForm.destroy()
         else:
             pass
     else:
         os.chdir(sounderdir)
-        with open('settings.ini', 'w') as file:
-            file.write(directory)
-            file.write('\n')
-            file.write(themeset)
+        settings["theme"] = themeset
+        settings["directory"] = directory
+        settings["version"] = version
+        with open('cfg.json', 'w') as file:
+            json.dump(settings, file)
         mixer.music.stop()
         PlayerForm.destroy()
 
 
 def info():
-    global themeset, infoframe
+    global themeset, infoframe, version
     infoframe = Toplevel(PlayerForm)
     infoframe.geometry("300x220")
     infoframe.resizable(width=False, height=False)
     infoframe.title("Sounder Info")
     infoframe.iconbitmap(sounderdir + "\\Soundericon.ico")
     infoframe.grab_set()
-    verlabel = ttk.Label(infoframe, text="Version 2.8.1", font='Bahnschrift 11', style="W.TLabel")
+    verlabel = ttk.Label(infoframe, text="Version {}".format(version), font='Bahnschrift 11', style="W.TLabel")
     authorlabel = ttk.Label(infoframe, text="By: Mateusz Perczak", font='Bahnschrift 11', style="W.TLabel")
     musiclabel = ttk.Label(infoframe, image=InfoMusic, style="W.TLabel")
     copylabel = ttk.Label(infoframe, image=Copyright, style="W.TLabel")
